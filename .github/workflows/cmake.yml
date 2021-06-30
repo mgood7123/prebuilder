@@ -55,13 +55,18 @@ jobs:
         git config --global user.email "bot";
         git config --global user.name "bot"
       
-    - name: clone - copy - push
+    - name: stash - copy - push
       run: |
-        git clone https://github.com/${{github.repository}} repo
-        cd repo
-        git checkout -b "OUTPUT"
+    - name: stash - copy - push
+      run: |
         ${{matrix.mkdir}}
         ${{matrix.copyLibs}}
-        git add -Av
+        git add -A build
+        git rm -rf build
+        git checkout -b "OUTPUT"
+        git add -A ${{matrix.out}}
         git commit -m "automated push"
-        git push https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}.git
+        git stash
+        git rm -rf .
+        git stash pop
+        git push
