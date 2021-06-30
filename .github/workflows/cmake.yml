@@ -70,9 +70,9 @@ jobs:
         ${{matrix.copyLibs}}
         git add -A build
         git rm -rf build
+        git add -A prebuilt
         git stash
         git checkout GITHUB_PREBUILTS_BOT
-        git add -A prebuilt
         git rm -rf .
         git stash pop
         git commit -m "automated push"
