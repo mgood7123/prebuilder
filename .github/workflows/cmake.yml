@@ -63,13 +63,19 @@ jobs:
       run: |
         git config --global user.email "bot";
         git config --global user.name "bot"
-      
-    - name: stash - copy - push
+        
+    - name: copy files
       run: |
         ${{matrix.mkdir}}
         ${{matrix.copyLibs}}
         git add -A build
         git rm -rf build
+      
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+    
+    - name: stash - copy - push
+      run: |
         git add -A prebuilt
         git stash
         git checkout GITHUB_PREBUILTS_BOT
