@@ -14,7 +14,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os:  [ubuntu-latest, windows-latest, macOS-latest]
+        lib: [.so,          .dll,           .dylib       ]
+        ls: [find, Get-ChildItem -r -path, find]
+        filter: [-name, -filter, -name]
+        wildcard: [\\\*, \*, \\\*]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,9 +32,8 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
       
-    - name: list shared libs UNIX
-      run: find ${{github.workspace}}/build -name \*.so
-      if: matrix.os != 'windows-latest'
+    - name: list shared libs
+      run: ${{ matrix.ls }} ${{github.workspace}}/build ${{ matrix.filter }}  ${{ matrix.wildcard }}.${{ matrix.lib }}
       
     - name: list shared libs WINDOWS POWERSHELL
       #uses: mxschmitt/action-tmate@v3
