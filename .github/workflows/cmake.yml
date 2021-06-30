@@ -21,9 +21,9 @@ jobs:
         include:
         - os: ubuntu-latest
           out: repo/prebuilt-ubuntu-latest
-          listLibs: find build -name \\\*.so
+          listLibs: find build -name \*.so
           mkdir: mkdir prebuilt-ubuntu-latest
-          copyLibs: find ../build -name \\\*.so -exec cp -v {} prebuilt-ubuntu-latest \;
+          copyLibs: find ../build -name \*.so -exec cp -v {} prebuilt-ubuntu-latest \;
         - os: windows-latest
           out: repo/prebuilt-windows-latest
           listLibs: Get-ChildItem -path build -r -filter *.dll
@@ -31,9 +31,9 @@ jobs:
           copyLibs: Get-ChildItem -path ../build -r -filter *.dll | Copy-Item -v -Destination prebuilt-windows-latest
         - os: macOS-latest
           out: repo/prebuilt-macOS-latest
-          listLibs: find build -name \\\*.dylib
+          listLibs: find build -name \*.dylib
           mkdir: mkdir prebuilt-macOS-latest
-          copyLibs: find ../build -name \\\*.dylib -exec cp -v {} prebuilt-macOS-latest \;
+          copyLibs: find ../build -name \*.dylib -exec cp -v {} prebuilt-macOS-latest \;
 
     steps:
     - uses: actions/checkout@v2
@@ -52,16 +52,22 @@ jobs:
       
     - name: git config global
       run: |
-        git config --global user.email "smallville7123@gmail.com";
-        git config --global user.name "mgood7123"
+        git config --global user.email "bot";
+        git config --global user.name "bot"
       
-    - name: push
+    - name: clone
       run: |
         git clone https://github.com/${{ github.repository }} repo
         cd repo
         git checkout -b "OUTPUT"
+      
+    - name: copy files
+      run: |
+        pwd
         ${{matrix.mkdir}}
         ${{matrix.copyLibs}}
         git add -Av
-        git commit -m "automated force push"
-        git push
+        git commit -m "automated push"
+        
+#     - name: push
+#       run: git push
