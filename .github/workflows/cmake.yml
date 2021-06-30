@@ -36,11 +36,11 @@ jobs:
     
     - name: copy shared libs UNIX
       run: find repo/prebuilt-${{ matrix.os }} -name \*.so -exec cp -v {} repo/prebuilt-${{ matrix.os }} \; 
-      if: matrix.os != "windows-latest"
+      if: matrix.os != 'windows-latest'
       
     - name: copy shared libs WINDOWS
       run: find repo/prebuilt-${{ matrix.os }} -name \*.so -exec cp -v {} repo/prebuilt-${{ matrix.os }} \; 
-      if: matrix.os == "windows-latest"
+      if: matrix.os == 'windows-latest'
 
     - name: list libraries
       run: find repo/prebuilt-${{ matrix.os }}
