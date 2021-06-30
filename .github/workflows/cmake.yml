@@ -33,8 +33,8 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: list shared libs WINDOWS POWERSHELL
-      uses: mxschmitt/action-tmate@v3
-#       run: Get-ChildItem -Path "${{github.workspace}}/build/*" -Include *.so -Recurse
+      #uses: mxschmitt/action-tmate@v3
+      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
       if: matrix.os == 'windows-latest'
       
     - name: clone
@@ -48,7 +48,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: copy shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -Path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -Filter *.so -r | Copy-Item -Destination ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll | Copy-Item -Destination ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -v
       if: matrix.os == 'windows-latest'
 
     - name: list shared libs UNIX
@@ -56,5 +56,5 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: list shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -Path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -Filter *.so -r
+      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
       if: matrix.os == 'windows-latest'
