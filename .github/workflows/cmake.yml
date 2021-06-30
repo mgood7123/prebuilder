@@ -94,4 +94,4 @@ jobs:
         
     - name: push
       run: |
-        git push --set-upstream origin GITHUB_PREBUILTS_BOT || (git pull && git push --set-upstream origin GITHUB_PREBUILTS_BOT)
+        git push --set-upstream origin GITHUB_PREBUILTS_BOT
