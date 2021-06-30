@@ -23,17 +23,17 @@ jobs:
           out: repo/prebuilt-ubuntu-latest
           listLibs: find build -name \*.so
           mkdir: mkdir prebuilt-ubuntu-latest
-          copyLibs: find ../build -name \*.so -exec cp -v {} prebuilt-ubuntu-latest \;
+          copyLibs: find build -name \*.so -exec cp -v {} prebuilt-ubuntu-latest \;
         - os: windows-latest
           out: repo/prebuilt-windows-latest
           listLibs: Get-ChildItem -path build -r -filter *.dll
           mkdir: mkdir prebuilt-windows-latest
-          copyLibs: Get-ChildItem -path ../build -r -filter *.dll | Copy-Item -v -Destination prebuilt-windows-latest
+          copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination prebuilt-windows-latest
         - os: macOS-latest
           out: repo/prebuilt-macOS-latest
           listLibs: find build -name \*.dylib
           mkdir: mkdir prebuilt-macOS-latest
-          copyLibs: find ../build -name \*.dylib -exec cp -v {} prebuilt-macOS-latest \;
+          copyLibs: find build -name \*.dylib -exec cp -v {} prebuilt-macOS-latest \;
 
     steps:
     - uses: actions/checkout@v2
@@ -55,8 +55,6 @@ jobs:
         git config --global user.email "bot";
         git config --global user.name "bot"
       
-    - name: stash - copy - push
-      run: |
     - name: stash - copy - push
       run: |
         ${{matrix.mkdir}}
