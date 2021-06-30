@@ -21,16 +21,28 @@ jobs:
           ls: find
           filter: -name
           wildcard: \\\*
+          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+          build: ${{github.workspace}}/build
+          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
+          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
         - os: macOS-latest
           lib: .so
           ls: find
           filter: -name
           wildcard: \\\*
-        - os: ubuntu-latest
+          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+          build: ${{github.workspace}}/build
+          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
+          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
+        - os: windows-latest
           lib: .dll
           ls: Get-ChildItem -r -path
           filter: -filter
           wildcard: \*
+          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+          build: ${{github.workspace}}/build
+          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
+          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
 
     steps:
     - uses: actions/checkout@v2
@@ -38,38 +50,23 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{matrix.build}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{matrix.build}} --config ${{env.BUILD_TYPE}}
       
-    - name: list shared libs
-      run: ${{ matrix.ls }} ${{github.workspace}}/build ${{ matrix.include.filter }} ${{ matrix.include.wildcard }}.${{ matrix.include.lib }}
-      
-    - name: list shared libs WINDOWS POWERSHELL
-      #uses: mxschmitt/action-tmate@v3
-      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
-      if: matrix.os == 'windows-latest'
+    - name: list libs
+      run: ${{matrix.listLibs}} ${{matrix.build}}
       
     - name: clone
       run: git clone https://github.com/mgood7123/prebuilder-push-to-test ${{github.workspace}}/repo
 
     - name: create shared libs directory
-      run: mkdir ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+      run: mkdir ${{matrix.out}}
     
-    - name: copy shared libs UNIX
-      run: find ${{github.workspace}}/build -name \*.so -exec cp -v {} ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} \;
-      if: matrix.os != 'windows-latest'
-      
-    - name: copy shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll | Copy-Item -Destination ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -v
-      if: matrix.os == 'windows-latest'
+    - name: copy shared libs
+      run: ${{matrix.copyLibs}}
 
-    - name: list shared libs UNIX
-      run: find ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -name \*.so
-      if: matrix.os != 'windows-latest'
-      
-    - name: list shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -r -filter *.dll
-      if: matrix.os == 'windows-latest'
+    - name: list libs
+      run: ${{ matrix.listLibs }} ${{matrix.out}}
