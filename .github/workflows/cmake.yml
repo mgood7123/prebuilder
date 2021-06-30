@@ -32,8 +32,8 @@ jobs:
       run: find ${{github.workspace}}/build -name \*.so
       if: matrix.os != 'windows-latest'
       
-    - name: list shared libs WINDOWS
-      run: dir ${{github.workspace}}/build *.so
+    - name: list shared libs WINDOWS POWERSHELL
+      run: Get-ChildItem -Path ${{github.workspace}}/build -Filter *.so -r
       if: matrix.os == 'windows-latest'
 
     - name: clone
@@ -46,14 +46,14 @@ jobs:
       run: find ${{github.workspace}}/build -name \*.so -exec cp -v {} ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} \;
       if: matrix.os != 'windows-latest'
       
-    - name: copy shared libs WINDOWS
-      run: FOR /F "TOKENS=*" %F IN ('dir ${{github.workspace}}/build *.so') DO COPY /Y "%~F" "${{github.workspace}}/repo/prebuilt-${{ matrix.os }}"
+    - name: copy shared libs WINDOWS POWERSHELL
+      run: Get-ChildItem -Path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -Filter *.so -r | Copy-Item -Destination ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
       if: matrix.os == 'windows-latest'
 
     - name: list shared libs UNIX
       run: find ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -name \*.so
       if: matrix.os != 'windows-latest'
       
-    - name: list shared libs WINDOWS
-      run: dir ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} *.so
+    - name: list shared libs WINDOWS POWERSHELL
+      run: Get-ChildItem -Path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -Filter *.so -r
       if: matrix.os == 'windows-latest'
