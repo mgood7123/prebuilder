@@ -63,8 +63,8 @@ jobs:
         git rm -rf build
         git checkout -b "OUTPUT"
         git add -A ${{matrix.out}}
-        git commit -m "automated push"
         git stash
         git rm -rf .
         git stash pop
-        git push
+        git commit -m "automated push"
+        git push --set-upstream origin OUTPUT
