@@ -45,7 +45,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
       
     - name: list shared libs
-      run: ${{ matrix.include.ls }} ${{github.workspace}}/build ${{ matrix.include.filter }} ${{ matrix.include.wildcard }}.${{ matrix.include.lib }}
+      run: ${{ matrix.ls }} ${{github.workspace}}/build ${{ matrix.include.filter }} ${{ matrix.include.wildcard }}.${{ matrix.include.lib }}
       
     - name: list shared libs WINDOWS POWERSHELL
       #uses: mxschmitt/action-tmate@v3
