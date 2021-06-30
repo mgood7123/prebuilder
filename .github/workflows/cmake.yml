@@ -73,7 +73,7 @@ jobs:
         git add -A prebuilt
         git stash
         git rm -rf .
-        git fetch
+        git pull
         git stash pop
         git commit -m "automated push"
         git push --set-upstream origin GITHUB_PREBUILTS_BOT
