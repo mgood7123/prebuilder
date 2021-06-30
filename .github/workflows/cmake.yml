@@ -80,5 +80,5 @@ jobs:
         git rm -rf .
         git checkout GITHUB_PREBUILTS_BOT
         git stash pop
-        git commit -m "automated push"
-        git push --set-upstream origin GITHUB_PREBUILTS_BOT
+        git commit -m "automated push" || true
+        git push --set-upstream origin GITHUB_PREBUILTS_BOT || true
