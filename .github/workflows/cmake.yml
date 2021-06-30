@@ -62,3 +62,6 @@ jobs:
 
     - name: list libs
       run: ${{matrix.listLibsOut}}
+      
+    - name: push
+      run: cd repo; git add -Av ; git commit -m "automated push"; git push
