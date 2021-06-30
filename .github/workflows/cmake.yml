@@ -56,5 +56,5 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: list shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
+      run: Get-ChildItem -path ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} -r -filter *.dll
       if: matrix.os == 'windows-latest'
