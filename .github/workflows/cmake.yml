@@ -18,8 +18,8 @@ jobs:
         include:
         - os: ubuntu-latest
           out: repo/prebuilt-ubuntu-latest
-          listLibs: find -name \\\*.so
-          copyLibs: find -name \\\*.so build -exec cp -v {} repo/prebuilt-ubuntu-latest \;
+          listLibs: find build -name \\\*.so
+          copyLibs: find build -name \\\*.so -exec cp -v {} repo/prebuilt-ubuntu-latest \;
           mkdir: mkdir repo/prebuilt-ubuntu-latest
         - os: windows-latest
           out: repo/prebuilt-windows-latest
@@ -28,8 +28,8 @@ jobs:
           mkdir: mkdir repo/prebuilt-windows-latest
         - os: macOS-latest
           out: repo/prebuilt-macOS-latest
-          listLibs: find -name \\\*.dylib
-          copyLibs: find -name \\\*.dylib build -exec cp -v {} repo/prebuilt-macOS-latest \;
+          listLibs: find build -name \\\*.dylib
+          copyLibs: find build -name \\\*.dylib -exec cp -v {} repo/prebuilt-macOS-latest \;
           mkdir: mkdir repo/prebuilt-macOS-latest
 
     steps:
