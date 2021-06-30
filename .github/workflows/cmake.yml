@@ -34,7 +34,7 @@ jobs:
       
     - name: list shared libs WINDOWS POWERSHELL
       uses: mxschmitt/action-tmate@v3
-      run: Get-ChildItem -Path "${{github.workspace}}/build/*" -Include *.so -Recurse
+#       run: Get-ChildItem -Path "${{github.workspace}}/build/*" -Include *.so -Recurse
       if: matrix.os == 'windows-latest'
       
     - name: clone
