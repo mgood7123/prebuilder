@@ -87,8 +87,11 @@ jobs:
       run: |
         git checkout GITHUB_PREBUILTS_BOT
     
-    - name: push
+    - name: stash pop
       run: |
         git stash pop
         git commit -m "automated push"
+        
+    - name: push
+      run: |
         git push --set-upstream origin GITHUB_PREBUILTS_BOT
