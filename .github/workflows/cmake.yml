@@ -68,8 +68,7 @@ jobs:
       run: |
         ${{matrix.mkdir}}
         ${{matrix.copyLibs}}
-        git add -A build
-        git rm -rf build
+        rm -rf build
       
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
@@ -78,8 +77,8 @@ jobs:
       run: |
         git add -A prebuilt
         git stash
-        git checkout GITHUB_PREBUILTS_BOT
         git rm -rf .
+        git checkout GITHUB_PREBUILTS_BOT
         git stash pop
         git commit -m "automated push"
         git push --set-upstream origin GITHUB_PREBUILTS_BOT
