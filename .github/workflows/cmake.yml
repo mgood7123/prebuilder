@@ -70,8 +70,8 @@ jobs:
         ${{matrix.copyLibs}}
         rm -rf build
       
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+#     - name: Setup tmate session
+#       uses: mxschmitt/action-tmate@v3
     
     - name: stash - copy - push
       run: |
