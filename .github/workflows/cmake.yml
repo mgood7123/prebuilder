@@ -15,10 +15,10 @@ jobs:
     permissions:
       contents: write
     strategy:
+      fail-fast: false
+      max-parallel: 1
       matrix:
         os:  [ubuntu-latest, windows-latest, macOS-latest]
-        fail-fast: false
-        max-parallel: 1
         include:
         - os: ubuntu-latest
           out: prebuilt/ubuntu-latest
