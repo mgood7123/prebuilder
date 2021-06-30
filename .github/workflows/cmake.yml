@@ -20,17 +20,17 @@ jobs:
         os:  [ubuntu-latest, windows-latest, macOS-latest]
         include:
         - os: ubuntu-latest
-          out: repo/prebuilt-ubuntu-latest
+          out: prebuilt-ubuntu-latest
           listLibs: find build -name \*.so
           mkdir: mkdir prebuilt-ubuntu-latest
           copyLibs: find build -name \*.so -exec cp -v {} prebuilt-ubuntu-latest \;
         - os: windows-latest
-          out: repo/prebuilt-windows-latest
+          out: prebuilt-windows-latest
           listLibs: Get-ChildItem -path build -r -filter *.dll
           mkdir: mkdir prebuilt-windows-latest
           copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination prebuilt-windows-latest
         - os: macOS-latest
-          out: repo/prebuilt-macOS-latest
+          out: prebuilt-macOS-latest
           listLibs: find build -name \*.dylib
           mkdir: mkdir prebuilt-macOS-latest
           copyLibs: find build -name \*.dylib -exec cp -v {} prebuilt-macOS-latest \;
