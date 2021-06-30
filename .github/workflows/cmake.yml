@@ -64,4 +64,4 @@ jobs:
         ${{matrix.copyLibs}}
         git add -Av
         git commit -m "automated push"
-        git push https://${{github.repository_owner}}@github.com/${{github.repository}}.git
+        git push https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}.git
