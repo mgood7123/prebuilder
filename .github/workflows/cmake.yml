@@ -39,7 +39,10 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: pull
-      run: git pull
+      run: |
+        git checkout -b "OUTPUT"
+        git pull
+        git checkout -b ${{github.branch}}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
