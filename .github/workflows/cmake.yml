@@ -33,7 +33,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: list shared libs WINDOWS
-      run: for /r ${{github.workspace}}/build %lib in (*.so) do @echo "%f"
+      run: dir ${{github.workspace}}/build *.so
       if: matrix.os == 'windows-latest'
 
     - name: clone
@@ -47,7 +47,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: copy shared libs WINDOWS
-      run: for /r ${{github.workspace}}/build %lib in (*.so) do @copy "%f" ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+      run: FOR /F "TOKENS=*" %F IN ('dir ${{github.workspace}}/build *.so') DO COPY /Y "%~F" "${{github.workspace}}/repo/prebuilt-${{ matrix.os }}"
       if: matrix.os == 'windows-latest'
 
     - name: list shared libs UNIX
@@ -55,5 +55,5 @@ jobs:
       if: matrix.os != 'windows-latest'
       
     - name: list shared libs WINDOWS
-      run: for /r ${{github.workspace}}/build %lib in (*.so) do @echo "%f"
+      run: dir ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} *.so
       if: matrix.os == 'windows-latest'
