@@ -17,23 +17,20 @@ jobs:
         os:  [ubuntu-latest, windows-latest, macOS-latest]
         include:
         - os: ubuntu-latest
-          out: ${{github.workspace}}/repo/prebuilt-ubuntu-latest
-          build: ${{github.workspace}}/build
+          out: repo/prebuilt-ubuntu-latest
           listLibs: find -name \\\*.so
-          copyLibs: find -name \\\*.so ${{github.workspace}}/build -exec cp -v {} ${{github.workspace}}/repo/prebuilt-ubuntu-latest \;
-          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-ubuntu-latest
+          copyLibs: find -name \\\*.so build -exec cp -v {} repo/prebuilt-ubuntu-latest \;
+          mkdir: mkdir repo/prebuilt-ubuntu-latest
         - os: windows-latest
-          out: ${{github.workspace}}/repo/prebuilt-windows-latest
-          build: ${{github.workspace}}/build
-          listLibs: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
-          copyLibs: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll | Copy-Item -v -Destination ${{github.workspace}}/repo/prebuilt-windows-latest
-          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-windows-latest
+          out: repo/prebuilt-windows-latest
+          listLibs: Get-ChildItem -path build -r -filter *.dll
+          copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination repo/prebuilt-windows-latest
+          mkdir: mkdir repo/prebuilt-windows-latest
         - os: macOS-latest
-          out: ${{github.workspace}}/repo/prebuilt-macOS-latest
-          build: ${{github.workspace}}/build
+          out: repo/prebuilt-macOS-latest
           listLibs: find -name \\\*.dylib
-          copyLibs: find -name \\\*.dylib ${{github.workspace}}/build -exec cp -v {} ${{github.workspace}}/repo/prebuilt-macOS-latest \;
-          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-macOS-latest
+          copyLibs: find -name \\\*.dylib build -exec cp -v {} repo/prebuilt-macOS-latest \;
+          mkdir: mkdir repo/prebuilt-macOS-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -41,17 +38,17 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{matrix.build}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{matrix.build}} --config ${{env.BUILD_TYPE}}
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
       
     - name: list libs
       run: ${{matrix.listLibs}}
       
     - name: clone
-      run: git clone https://github.com/mgood7123/prebuilder-push-to-test ${{github.workspace}}/repo
+      run: git clone https://github.com/mgood7123/prebuilder-push-to-test repo
 
     - name: create shared libs directory
       run: ${{matrix.mkdir}}
