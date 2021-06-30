@@ -13,6 +13,8 @@ jobs:
   build:
     concurrency: ONE
     runs-on: ${{ matrix.os }}
+    permissions:
+      repository-projects: write
     strategy:
       matrix:
         os:  [ubuntu-latest, windows-latest, macOS-latest]
@@ -20,21 +22,18 @@ jobs:
         - os: ubuntu-latest
           out: repo/prebuilt-ubuntu-latest
           listLibs: find build -name \\\*.so
-          listLibsOut: find repo/prebuilt-ubuntu-latest -name \\\*.so
-          copyLibs: find build -name \\\*.so -exec cp -v {} repo/prebuilt-ubuntu-latest \;
-          mkdir: mkdir repo/prebuilt-ubuntu-latest
+          mkdir: mkdir prebuilt-ubuntu-latest
+          copyLibs: find ../build -name \\\*.so -exec cp -v {} prebuilt-ubuntu-latest \;
         - os: windows-latest
           out: repo/prebuilt-windows-latest
           listLibs: Get-ChildItem -path build -r -filter *.dll
-          listLibsOut: Get-ChildItem -path repo/prebuilt-windows-latest -r -filter *.dll
-          copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination repo/prebuilt-windows-latest
-          mkdir: mkdir repo/prebuilt-windows-latest
+          mkdir: mkdir prebuilt-windows-latest
+          copyLibs: Get-ChildItem -path ../build -r -filter *.dll | Copy-Item -v -Destination prebuilt-windows-latest
         - os: macOS-latest
           out: repo/prebuilt-macOS-latest
           listLibs: find build -name \\\*.dylib
-          listLibsOut: find repo/prebuilt-macOS-latest -name \\\*.dylib
-          copyLibs: find build -name \\\*.dylib -exec cp -v {} repo/prebuilt-macOS-latest \;
-          mkdir: mkdir repo/prebuilt-macOS-latest
+          mkdir: mkdir prebuilt-macOS-latest
+          copyLibs: find ../build -name \\\*.dylib -exec cp -v {} prebuilt-macOS-latest \;
 
     steps:
     - uses: actions/checkout@v2
@@ -51,17 +50,18 @@ jobs:
     - name: list libs
       run: ${{matrix.listLibs}}
       
-    - name: clone
-      run: git clone https://github.com/mgood7123/prebuilder-push-to-test repo
-
-    - name: create shared libs directory
-      run: ${{matrix.mkdir}}
-    
-    - name: copy shared libs
-      run: ${{matrix.copyLibs}}
-
-    - name: list libs
-      run: ${{matrix.listLibsOut}}
+    - name: git config global
+      run: |
+        git config --global user.email "smallville7123@gmail.com";
+        git config --global user.name "mgood7123"
       
     - name: push
-      run: cd repo; git add -Av ; git commit -m "automated push"; git push
+      run: |
+        git clone https://github.com/${{ github.repository }} repo
+        cd repo
+        git checkout -b "OUTPUT"
+        ${{matrix.mkdir}}
+        ${{matrix.copyLibs}}
+        git add -Av
+        git commit -m "automated force push"
+        git push
