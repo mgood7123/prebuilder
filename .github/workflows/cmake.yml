@@ -32,8 +32,20 @@ jobs:
       run: find ${{github.workspace}}/build -name \*.so
       if: matrix.os != 'windows-latest'
       
-    - name: list shared libs WINDOWS POWERSHELL
-      run: Get-ChildItem -Path ${{github.workspace}}/build -Filter *.so -r
+    - name: list shared libs WINDOWS POWERSHELL 1
+      run: Get-ChildItem -Path "${{github.workspace}}/build/*" -Include *.so -Recurse
+      if: matrix.os == 'windows-latest'
+      
+    - name: list shared libs WINDOWS POWERSHELL 2
+      run: Get-ChildItem -Path "${{github.workspace}}\build\*" -Include *.so -Recurse
+      if: matrix.os == 'windows-latest'
+      
+    - name: list shared libs WINDOWS POWERSHELL 3
+      run: Get-ChildItem -Path "${{github.workspace}}/build" -Include *.so -Recurse
+      if: matrix.os == 'windows-latest'
+
+    - name: list shared libs WINDOWS POWERSHELL 4
+      run: Get-ChildItem -Path "${{github.workspace}}\build" -Include *.so -Recurse
       if: matrix.os == 'windows-latest'
 
     - name: clone
