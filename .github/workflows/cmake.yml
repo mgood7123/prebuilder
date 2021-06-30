@@ -11,6 +11,7 @@ env:
 
 jobs:
   build:
+    concurrency: ONE
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,16 +20,19 @@ jobs:
         - os: ubuntu-latest
           out: repo/prebuilt-ubuntu-latest
           listLibs: find build -name \\\*.so
+          listLibsOut: find repo/prebuilt-ubuntu-latest -name \\\*.so
           copyLibs: find build -name \\\*.so -exec cp -v {} repo/prebuilt-ubuntu-latest \;
           mkdir: mkdir repo/prebuilt-ubuntu-latest
         - os: windows-latest
           out: repo/prebuilt-windows-latest
           listLibs: Get-ChildItem -path build -r -filter *.dll
+          listLibsOut: Get-ChildItem -path repo/prebuilt-windows-latest -r -filter *.dll
           copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination repo/prebuilt-windows-latest
           mkdir: mkdir repo/prebuilt-windows-latest
         - os: macOS-latest
           out: repo/prebuilt-macOS-latest
           listLibs: find build -name \\\*.dylib
+          listLibsOut: find repo/prebuilt-macOS-latest -name \\\*.dylib
           copyLibs: find build -name \\\*.dylib -exec cp -v {} repo/prebuilt-macOS-latest \;
           mkdir: mkdir repo/prebuilt-macOS-latest
 
@@ -57,4 +61,4 @@ jobs:
       run: ${{matrix.copyLibs}}
 
     - name: list libs
-      run: ${{matrix.listLibs}}
+      run: ${{matrix.listLibsOut}}
