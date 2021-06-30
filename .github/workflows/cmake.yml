@@ -37,17 +37,17 @@ jobs:
       if: matrix.os == 'windows-latest'
 
     - name: clone
-      run: git clone https://github.com/mgood7123/prebuilder-push-to-test ${{github.workspace}}\repo
+      run: git clone https://github.com/mgood7123/prebuilder-push-to-test ${{github.workspace}}/repo
 
     - name: create shared libs directory
-      run: mkdir repo/prebuilt-${{ matrix.os }}
+      run: mkdir ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
     
     - name: copy shared libs UNIX
-      run: find ${{github.workspace}}/build -name \*.so -exec cp -v {} repo/prebuilt-${{ matrix.os }} \;
+      run: find ${{github.workspace}}/build -name \*.so -exec cp -v {} ${{github.workspace}}/repo/prebuilt-${{ matrix.os }} \;
       if: matrix.os != 'windows-latest'
       
     - name: copy shared libs WINDOWS
-      run: for /r ${{github.workspace}}/build %lib in (*.so) do @copy "%f" repo/prebuilt-${{ matrix.os }}
+      run: for /r ${{github.workspace}}/build %lib in (*.so) do @copy "%f" ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
       if: matrix.os == 'windows-latest'
 
     - name: list shared libs UNIX
