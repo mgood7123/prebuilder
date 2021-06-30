@@ -17,32 +17,23 @@ jobs:
         os:  [ubuntu-latest, windows-latest, macOS-latest]
         include:
         - os: ubuntu-latest
-          lib: .so
-          ls: find
-          filter: -name
-          wildcard: \\\*
-          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+          out: ${{github.workspace}}/repo/prebuilt-ubuntu-latest
           build: ${{github.workspace}}/build
-          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
-          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
-        - os: macOS-latest
-          lib: .so
-          ls: find
-          filter: -name
-          wildcard: \\\*
-          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
-          build: ${{github.workspace}}/build
-          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
-          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
+          listLibs: find -name \\\*.so
+          copyLibs: find -name \\\*.so ${{github.workspace}}/build -exec cp -v {} ${{github.workspace}}/repo/prebuilt-ubuntu-latest \;
+          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-ubuntu-latest
         - os: windows-latest
-          lib: .dll
-          ls: Get-ChildItem -r -path
-          filter: -filter
-          wildcard: \*
-          out: ${{github.workspace}}/repo/prebuilt-${{ matrix.os }}
+          out: ${{github.workspace}}/repo/prebuilt-windows-latest
           build: ${{github.workspace}}/build
-          listLibs: ${{ matrix.ls }} ${{ matrix.filter }} ${{ matrix.wildcard }}.${{ matrix.lib }}
-          copyLibs: ${{matrix.listLibs}} ${{matrix.build}} -exec cp -v {} ${{matrix.out}} \;
+          listLibs: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll
+          copyLibs: Get-ChildItem -path ${{github.workspace}}/build -r -filter *.dll | Copy-Item -v -Destination ${{github.workspace}}/repo/prebuilt-windows-latest
+          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-windows-latest
+        - os: macOS-latest
+          out: ${{github.workspace}}/repo/prebuilt-macOS-latest
+          build: ${{github.workspace}}/build
+          listLibs: find -name \\\*.dylib
+          copyLibs: find -name \\\*.dylib ${{github.workspace}}/build -exec cp -v {} ${{github.workspace}}/repo/prebuilt-macOS-latest \;
+          mkdir: mkdir ${{github.workspace}}/repo/prebuilt-macOS-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -57,16 +48,16 @@ jobs:
       run: cmake --build ${{matrix.build}} --config ${{env.BUILD_TYPE}}
       
     - name: list libs
-      run: ${{matrix.listLibs}} ${{matrix.build}}
+      run: ${{matrix.listLibs}}
       
     - name: clone
       run: git clone https://github.com/mgood7123/prebuilder-push-to-test ${{github.workspace}}/repo
 
     - name: create shared libs directory
-      run: mkdir ${{matrix.out}}
+      run: ${{matrix.mkdir}}
     
     - name: copy shared libs
       run: ${{matrix.copyLibs}}
 
     - name: list libs
-      run: ${{ matrix.listLibs }} ${{matrix.out}}
+      run: ${{matrix.listLibs}}
