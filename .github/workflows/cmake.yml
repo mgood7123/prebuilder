@@ -190,6 +190,7 @@ jobs:
             git branch -M main; \
             git remote add origin https://${{env.REPO_ACCESS_TOKEN}}:x-oauth-basic@github.com/${{github.repository}}-${{matrix.os}}.git; \
             git status; \
+            git remote -v; \
             git remote show origin; \
             git push --set-upstream origin main; \
         )
