@@ -127,7 +127,7 @@ jobs:
         ${{matrix.rm}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
         
-    - name split files unix
+    - name: split files unix
       run: |
         ./split_files_unix.sh
       
