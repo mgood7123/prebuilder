@@ -120,7 +120,6 @@ jobs:
       run: |
         ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} ${{matrix.pipe}} ${{matrix.copyLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ ${{matrix.copyLibs_E}}
         git status
-      if: matrix.os != 'windows-latest'
         
     - name: rm build
       run: |
@@ -130,7 +129,7 @@ jobs:
     - name: split files unix
       run: |
         chmod +x ./split_files_linux.sh
-        ./split_files_linux.sh
+        ./split_files_linux.sh ${{matrix.extension}}
         git status
 
     - name: add prebuilt
