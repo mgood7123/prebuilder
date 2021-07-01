@@ -35,15 +35,15 @@ jobs:
         
         - os: ubuntu-latest
           extension: so
-          split: ./split_files_macOS.sh
+          get_chmod: stat --format \\"%a\\"
 
         - os: macOS-latest
           extension: dylib
-          split: ./split_files_macOS.sh
+          get_chmod: stat -f \\"%OLp\\"
 
         - os: windows-latest
           extension: dll
-          split: ./split_files_macOS.sh
+          get_chmod: stat --format \\"%a\\"
 
     defaults:
       run:
@@ -106,7 +106,7 @@ jobs:
     - name: split files
       run: |
         chmod +x ${{matrix.split}}
-        ${{matrix.split}} ${{matrix.extension}}
+        ${{matrix.split}} ${{matrix.extension}} "${{matrix.get_chmod}}"
         git status
 
     - name: add prebuilt
