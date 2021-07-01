@@ -59,6 +59,10 @@ jobs:
           copyLibs_S: Copy-Item -v -Destination
           copyLibs_E: ${{null}}
           rm: Remove-Item -Recurse -Force
+          
+    defaults:
+      run:
+        shell: bash
 
     steps:
     - uses: actions/checkout@v2
