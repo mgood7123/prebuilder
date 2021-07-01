@@ -129,6 +129,8 @@ jobs:
         
     - name: split files unix
       run: |
+        ls -l
+        chmod +x ./split_files_linix.sh
         ./split_files_linix.sh
       
     - name: add prebuilt
