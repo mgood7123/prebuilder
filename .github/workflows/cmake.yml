@@ -89,8 +89,9 @@ jobs:
         git status
         
     - name: mkdir
+      continue-on-error: true
       run: |
-        ${{matrix.mkdir}} || true
+        ${{matrix.mkdir}}
         git status
         
     - name: copy files
