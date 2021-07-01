@@ -106,7 +106,7 @@ jobs:
     - name: split files
       run: |
         chmod +x ./split_files.sh
-        ./split_files.sh ${{matrix.extension}} "${{matrix.get_chmod}}"
+        ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
         git status
 
     - name: add prebuilt
