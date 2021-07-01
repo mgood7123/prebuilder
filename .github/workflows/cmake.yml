@@ -11,6 +11,16 @@ concurrency:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
+  
+  # Customize the build folder here
+  # IMPORTANT: this MUST NOT conflict with any existing folders
+  
+  GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER: GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+
+  # Customize the output folder here
+  # IMPORTANT: this MUST NOT conflict with any existing folders
+  
+  GITHUB_ACTIONS_PREBUILD_OUT_FOLDER: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
 
 jobs:
   build:
@@ -25,27 +35,24 @@ jobs:
         
         - os: ubuntu-latest
           extension: so
-          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
-          listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
-          copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest/ \;
-          rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/ubuntu-latest
+          listLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.so
+          copyLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.so -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/ubuntu-latest/ \;
+          rm: rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
           
         - os: macOS-latest
           extension: dylib
-          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
-          listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
-          copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest/ \;
-          rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/macOS-latest
+          listLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.dylib
+          copyLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.dylib -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/macOS-latest/ \;
+          rm: rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
           
         - os: windows-latest
           extension: dll
-          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
-          listLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
-          copyLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll | Copy-Item -v -Destination GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest/
-          rm: Remove-Item -Recurse -Force GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/windows-latest
+          listLibs: Get-ChildItem -path ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -r -filter *.dll
+          copyLibs: Get-ChildItem -path ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -r -filter *.dll | Copy-Item -v -Destination ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/windows-latest/
+          rm: Remove-Item -Recurse -Force ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
 
     steps:
     - uses: actions/checkout@v2
@@ -59,13 +66,13 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-        cmake -D GITHUB_ACTIONS_PREBUILD_EXTENSION=${{matrix.extension}} -B GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake -D GITHUB_ACTIONS_PREBUILD_EXTENSION=${{matrix.extension}} -B ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         git status
 
     - name: Build
       # Build your program with the given configuration
       run: |
-        cmake --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
+        cmake --build ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} --config ${{env.BUILD_TYPE}}
         git status
       
     - name: list libs
@@ -79,16 +86,16 @@ jobs:
         git config --global user.name "GITHUB_ACTIONS_PREBUILD"
         git status
         
-    - name: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+    - name: mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
       continue-on-error: true
       run: |
-        mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+        mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
         git status
         
-    - name: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/OS_NAME
+    - name: mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
       continue-on-error: true
       run: |
-        ${{matrix.mkdir}}
+        mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
 
     - name: copy files
@@ -103,13 +110,13 @@ jobs:
       
     - name: add prebuilt
       run: |
-        git add -Av GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+        git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
         git status
         
     - name: commit
       continue-on-error: true
       run: |
-        git commit -m "automated push of prebuilt binaries"
+        git commit -m "push prebuilts for ${{matrix.os}}"
         git status
         
     - name: push
