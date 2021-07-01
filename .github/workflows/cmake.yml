@@ -87,11 +87,6 @@ jobs:
         git config --global user.name "bot"
         git status
         
-    - name: git mark binary
-      run: |
-        ${{matrix.markAsBinary}}
-        git status
-
     - name: mkdir
       run: |
         ${{matrix.mkdir}}
@@ -130,6 +125,11 @@ jobs:
         git checkout GITHUB_PREBUILTS_BOT
         git status
     
+    - name: git mark binary
+      run: |
+        ${{matrix.markAsBinary}}
+        git status
+        
     - name: stash pop
       run: |
         git stash pop
