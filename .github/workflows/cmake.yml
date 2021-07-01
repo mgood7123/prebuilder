@@ -46,53 +46,92 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: checkout GITHUB_PREBUILTS_BOT
+    - name: pull
       run: |
         git pull
+        git status
+    - name: checkout GITHUB_PREBUILTS_BOT 
+      run: |
         ${{matrix.checkout}}
+        git status
+    - name: checkout -
+      run: |
         git checkout -
+        git status
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        git status
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build build --config ${{env.BUILD_TYPE}}
+      run: |
+        cmake --build build --config ${{env.BUILD_TYPE}}
+        git status
       
     - name: list libs
-      run: ${{matrix.listLibs}}
+      run: |
+        ${{matrix.listLibs}}
+        git status
       
     - name: git config global
       run: |
         git config --global user.email "bot";
         git config --global user.name "bot"
+        git status
 
-    - name: copy files
+    - name: mkdir
       run: |
         ${{matrix.mkdir}}
+        git status
+        
+    - name: copy files
+      run: |
         ${{matrix.copyLibs}}
+        git status
+        
+    - name: rm build
+      run: |
         ${{matrix.rm}}
+        git status
       
 #     - name: Setup tmate session
 #       uses: mxschmitt/action-tmate@v3
       
-    - name: stash
+    - name: add prebuilt
       run: |
         git add -Av prebuilt
+        git status
+        
+    - name: stash
+      run: |
         git stash
+        git status
+        
+    - name: clean
+      run: |
         git rm -rf .
+        git status
 
     - name: checkout
       run: |
         git checkout GITHUB_PREBUILTS_BOT
+        git status
     
     - name: stash pop
       run: |
         git stash pop
+        git status
+        
+    - name: commit
+      run: |
         git commit -m "automated push"
+        git status
         
     - name: push
       run: |
         git push --set-upstream origin GITHUB_PREBUILTS_BOT
+        git status
