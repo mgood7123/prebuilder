@@ -53,13 +53,13 @@ jobs:
 
         - os: windows-latest
           extension: dll
-          listLibs_S: Get-ChildItem -path
-          listLibs_E: -r -filter *
-          pipe: \|
-          copyLibs_S: Copy-Item -v -Destination
-          copyLibs_E: ${{null}}
-          rm: Remove-Item -Recurse -Force
-          
+          listLibs_S: find
+          listLibs_E: -name \*
+          pipe: ${{null}}
+          copyLibs_S: -exec cp -v {}
+          copyLibs_E: \;
+          rm: rm -rf
+
     defaults:
       run:
         shell: bash
@@ -126,6 +126,10 @@ jobs:
       run: |
         ${{matrix.rm}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
+        
+    - name split files unix
+      run: |
+        ./split_files_unix.sh
       
     - name: add prebuilt
       run: |
