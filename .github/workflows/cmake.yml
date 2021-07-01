@@ -35,12 +35,15 @@ jobs:
         
         - os: ubuntu-latest
           extension: so
+          split: ./split_files_macOS.sh
 
         - os: macOS-latest
           extension: dylib
+          split: ./split_files_macOS.sh
 
         - os: windows-latest
           extension: dll
+          split: ./split_files_macOS.sh
 
     defaults:
       run:
@@ -102,8 +105,8 @@ jobs:
         
     - name: split files
       run: |
-        chmod +x ./split_files_linux.sh
-        ./split_files_linux.sh ${{matrix.extension}}
+        chmod +x ${{matrix.split}}
+        ${{matrix.split}} ${{matrix.extension}}
         git status
 
     - name: add prebuilt
