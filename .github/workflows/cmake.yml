@@ -90,7 +90,7 @@ jobs:
         
     - name: mkdir
       run: |
-        ${{matrix.mkdir}}
+        ${{matrix.mkdir}} || true
         git status
         
     - name: copy files
