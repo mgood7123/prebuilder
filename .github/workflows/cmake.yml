@@ -34,33 +34,7 @@ env:
   # IMPORTANT: this MUST NOT conflict with any existing folders
   
   GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER: GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER
-  
-  # Put your secret here
-  # to create a secret, go to
-  
-  # User Profile -> Settings ->
-  # Developer Settings (at the bottom of page) -> Persional Access Tokens
-  
-  # then generate a new token and give it [public_repo] scope and then
-  # click [Generate token]
-  # finally copy its token id
-  
-  # next, go to your repository containing this workflow
-  # Settings -> Environments -> New Environment
-  
-  # give your new environment a name and then click [Configure Environment]
-  
-  # scroll down to [Environment secrets] and click [Add Secret]
-  
-  # in the [Value] field, past the token id that you copied earlier
-  
-  # in the [Name] field, enter a name, replacing spaces with underscore (_)
-  # for example, we will name it REPO_ACCESS_TOKEN
-  
-  # and then enter it here as ${{secrets.REPO_ACCESS_TOKEN}}
-  
-  REPO_ACCESS_TOKEN: ${{secrets.REPO_ACCESS_TOKEN}}
-  
+    
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -88,6 +62,32 @@ jobs:
     defaults:
       run:
         shell: bash
+      env:
+        # Put your secret here
+        # to create a secret, go to
+
+        # User Profile -> Settings ->
+        # Developer Settings (at the bottom of page) -> Persional Access Tokens
+
+        # then generate a new token and give it [public_repo] scope and then
+        # click [Generate token]
+        # finally copy its token id
+
+        # next, go to your repository containing this workflow
+        # Settings -> Environments -> New Environment
+
+        # give your new environment a name and then click [Configure Environment]
+
+        # scroll down to [Environment secrets] and click [Add Secret]
+
+        # in the [Value] field, past the token id that you copied earlier
+
+        # in the [Name] field, enter a name, replacing spaces with underscore (_)
+        # for example, we will name it REPO_ACCESS_TOKEN
+
+        # and then enter it here as ${{secrets.REPO_ACCESS_TOKEN}}
+
+        REPO_ACCESS_TOKEN: ${{secrets.REPO_ACCESS_TOKEN}}
 
     steps:
     - uses: actions/checkout@v2
@@ -176,7 +176,7 @@ jobs:
     - name: create branch if needed for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}})
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push https://${{github.repository_owner}}:${REPO_ACCESS_TOKEN}@github.com/${{github.repository}}-${{matrix.os}})
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: add files for EXTERNAL REPO
@@ -197,6 +197,6 @@ jobs:
     - name: push for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        git push https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}} -u origin main
+        git push https://${{github.repository_owner}}:${REPO_ACCESS_TOKEN}@github.com/${{github.repository}}-${{matrix.os}} -u origin main
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
