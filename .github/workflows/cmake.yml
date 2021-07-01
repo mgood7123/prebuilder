@@ -179,8 +179,8 @@ jobs:
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
       
-  - name: Setup tmate session
-    uses: mxschmitt/action-tmate@v3
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: create branch if needed for EXTERNAL REPO
       run: |
