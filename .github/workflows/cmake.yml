@@ -27,7 +27,7 @@ jobs:
           extension: so
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
           listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
           copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest/ \;
           rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
           
@@ -35,7 +35,7 @@ jobs:
           extension: dylib
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
           listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
           copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest/ \;
           rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
           
@@ -43,7 +43,7 @@ jobs:
           extension: dll
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
           listLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll
-          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
           copyLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll | Copy-Item -v -Destination GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest/
           rm: Remove-Item -Recurse -Force GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
 
@@ -79,12 +79,18 @@ jobs:
         git config --global user.name "GITHUB_ACTIONS_PREBUILD"
         git status
         
-    - name: mkdir
+    - name: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+      continue-on-error: true
+      run: |
+        mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+        git status
+        
+    - name: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/OS_NAME
       continue-on-error: true
       run: |
         ${{matrix.mkdir}}
         git status
-        
+
     - name: copy files
       run: |
         ${{matrix.copyLibs}}
