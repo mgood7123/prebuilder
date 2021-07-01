@@ -169,8 +169,9 @@ jobs:
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
     - name: set credential helper for EXTERNAL REPO
-      run: |
-        git config credential.https://github.com/.helper "! f() { echo username=${{github.repository_owner}}; echo password=${{env.REPO_ACCESS_TOKEN}}; };f"
+      uses: fusion-engineering/setup-git-credentials@v2
+      with:
+        credentials: https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: clone EXTERNAL REPO
