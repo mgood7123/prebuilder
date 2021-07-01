@@ -168,6 +168,11 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
+    - name: set credential helper for EXTERNAL REPO
+      uses: fusion-engineering/setup-git-credentials@v2
+      with:
+        credentials: https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/
+        
     - name: clone EXTERNAL REPO
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
@@ -176,7 +181,7 @@ jobs:
     - name: create branch if needed for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}})
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push -u origin main)
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: add files for EXTERNAL REPO
@@ -197,6 +202,6 @@ jobs:
     - name: push for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        git push https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}} -u origin main
+        git push
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
