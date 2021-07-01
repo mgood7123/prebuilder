@@ -107,6 +107,7 @@ jobs:
         git status
         
     - name: commit
+      continue-on-error: true
       run: |
         git commit -m "automated push of prebuilt binaries"
         git status
