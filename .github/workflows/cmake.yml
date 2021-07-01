@@ -3,7 +3,10 @@ name: CMake
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+
+concurrency: 
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -18,33 +21,29 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        os:  [macOS-latest]
-#         os:  [ubuntu-latest, macOS-latest, windows-latest]
+        os:  [ubuntu-latest, macOS-latest, windows-latest]
         include:
-#         - os: ubuntu-latest
-#           out: prebuilt/ubuntu-latest
-#           listLibs: find build -name \*.so
-#           mkdir: mkdir prebuilt; mkdir prebuilt/ubuntu-latest
-#           copyLibs: find build -name \*.so -exec cp -v {} prebuilt/ubuntu-latest \;
-#           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
-#           rm: rm -rf build
-#           markAsBinary: git config --global --add diff.so.binary
+        
+        - os: ubuntu-latest
+          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
+          listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
+          copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest \;
+          rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+          
         - os: macOS-latest
-          out: prebuilt/macOS-latest
-          listLibs: find build -name \*.dylib
-          mkdir: mkdir prebuilt; mkdir prebuilt/macOS-latest
-          copyLibs: find build -name \*.dylib -exec cp -v {} prebuilt/macOS-latest \;
-          checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
-          rm: rm -rf build
-          markAsBinary: git config --global --type bool --add diff.dylib.binary true
-#         - os: windows-latest
-#           out: prebuilt/windows-latest
-#           listLibs: Get-ChildItem -path build -r -filter *.dll
-#           mkdir: mkdir prebuilt; mkdir prebuilt/windows-latest
-#           copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination prebuilt/windows-latest
-#           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
-#           rm: Remove-Item -Recurse -Force build
-#           markAsBinary: git config --global --add diff.dll.binary
+          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
+          listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
+          copyLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib -exec cp -v {} GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest \;
+          rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+          
+        - os: windows-latest
+          out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
+          listLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll
+          mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
+          copyLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll | Copy-Item -v -Destination GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
+          rm: Remove-Item -Recurse -Force GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
 
     steps:
     - uses: actions/checkout@v2
@@ -53,28 +52,18 @@ jobs:
       run: |
         git pull
         git status
-        
-#     - name: checkout GITHUB_PREBUILTS_BOT 
-#       run: |
-#         ${{matrix.checkout}}
-#         git status
-        
-#     - name: checkout -
-#       run: |
-#         git checkout -
-#         git status
-    
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake -B GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         git status
 
     - name: Build
       # Build your program with the given configuration
       run: |
-        cmake --build build --config ${{env.BUILD_TYPE}}
+        cmake --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
         git status
       
     - name: list libs
@@ -84,8 +73,8 @@ jobs:
       
     - name: git config global
       run: |
-        git config --global user.email "bot";
-        git config --global user.name "bot"
+        git config --global user.email "GITHUB_ACTIONS_PREBUILD";
+        git config --global user.name "GITHUB_ACTIONS_PREBUILD"
         git status
         
     - name: mkdir
@@ -104,42 +93,14 @@ jobs:
         ${{matrix.rm}}
         git status
       
-#     - name: Setup tmate session
-#       uses: mxschmitt/action-tmate@v3
-      
     - name: add prebuilt
       run: |
-        git add -Av prebuilt
+        git add -Av GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
         git status
-        
-#     - name: stash
-#       run: |
-#         git stash
-#         git status
-        
-#     - name: clean
-#       run: |
-#         git rm -rf .
-#         git status
-
-#     - name: checkout
-#       run: |
-#         git checkout GITHUB_PREBUILTS_BOT
-#         git status
-    
-#     - name: git mark binary
-#       run: |
-#         ${{matrix.markAsBinary}}
-#         git status
-        
-#     - name: stash pop
-#       run: |
-#         git stash pop
-#         git status
         
     - name: commit
       run: |
-        git commit -m "automated push"
+        git commit -m "automated push of prebuilt binaries"
         git status
         
     - name: push
