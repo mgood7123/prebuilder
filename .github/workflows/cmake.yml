@@ -54,14 +54,15 @@ jobs:
         git pull
         git status
         
-    - name: checkout GITHUB_PREBUILTS_BOT 
-      run: |
-        ${{matrix.checkout}}
-        git status
-    - name: checkout -
-      run: |
-        git checkout -
-        git status
+#     - name: checkout GITHUB_PREBUILTS_BOT 
+#       run: |
+#         ${{matrix.checkout}}
+#         git status
+        
+#     - name: checkout -
+#       run: |
+#         git checkout -
+#         git status
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -110,30 +111,30 @@ jobs:
         git add -Av prebuilt
         git status
         
-    - name: stash
-      run: |
-        git stash
-        git status
+#     - name: stash
+#       run: |
+#         git stash
+#         git status
         
-    - name: clean
-      run: |
-        git rm -rf .
-        git status
+#     - name: clean
+#       run: |
+#         git rm -rf .
+#         git status
 
-    - name: checkout
-      run: |
-        git checkout GITHUB_PREBUILTS_BOT
-        git status
+#     - name: checkout
+#       run: |
+#         git checkout GITHUB_PREBUILTS_BOT
+#         git status
     
-    - name: git mark binary
-      run: |
-        ${{matrix.markAsBinary}}
-        git status
+#     - name: git mark binary
+#       run: |
+#         ${{matrix.markAsBinary}}
+#         git status
         
-    - name: stash pop
-      run: |
-        git stash pop
-        git status
+#     - name: stash pop
+#       run: |
+#         git stash pop
+#         git status
         
     - name: commit
       run: |
