@@ -36,7 +36,7 @@ jobs:
           copyLibs: find build -name \*.dylib -exec cp -v {} prebuilt/macOS-latest \;
           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
           rm: rm -rf build
-          markAsBinary: git config --global --add diff.dylib.binary
+          markAsBinary: git config --global --type bool --add diff.dylib.binary true
 #         - os: windows-latest
 #           out: prebuilt/windows-latest
 #           listLibs: Get-ChildItem -path build -r -filter *.dll
