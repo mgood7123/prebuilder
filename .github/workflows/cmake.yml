@@ -144,8 +144,9 @@ jobs:
       
     - name: add files for EXTERNAL REPO
         # repo may exist but empty, so create it
+        # https://${{github.repository_owner}}:${{github.token}}@github.com
       run: |
-        git clone https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git branch -M main
@@ -163,6 +164,6 @@ jobs:
     - name: push for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        git push -u origin main
+        git push https://${{github.repository_owner}}:${{github.token}}@github.com/${{github.repository}}-${{matrix.os}} -u origin main
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
