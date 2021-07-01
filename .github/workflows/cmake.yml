@@ -189,7 +189,7 @@ jobs:
             git commit -m "first commit"; \
             git branch -M main; \
             git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git; \
-            git push --repo=https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}} -u origin main --force; \
+            git push git://github.com/${{github.repository}}-${{matrix.os}} -u origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
