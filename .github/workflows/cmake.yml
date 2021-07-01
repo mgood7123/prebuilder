@@ -175,7 +175,7 @@ jobs:
         REPO_ACCESS_TOKEN: ${{secrets.REPO_ACCESS_TOKEN}}
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push https://${{github.repository_owner}}:${REPO_ACCESS_TOKEN}@github.com/${{github.repository}}-${{matrix.os}})
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push https://${{github.repository_owner}}:$REPO_ACCESS_TOKEN@github.com/${{github.repository}}-${{matrix.os}})
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: add files for EXTERNAL REPO
@@ -221,6 +221,6 @@ jobs:
         REPO_ACCESS_TOKEN: ${{secrets.REPO_ACCESS_TOKEN}}
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        git push https://${{github.repository_owner}}:${REPO_ACCESS_TOKEN}@github.com/${{github.repository}}-${{matrix.os}} -u origin main
+        git push https://${{github.repository_owner}}:$REPO_ACCESS_TOKEN@github.com/${{github.repository}}-${{matrix.os}} -u origin main
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
