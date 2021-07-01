@@ -146,7 +146,6 @@ jobs:
         mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git branch -M main
-        git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
         git add -Av
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
