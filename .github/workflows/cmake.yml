@@ -183,6 +183,11 @@ jobs:
 
     - name: create branch if needed for EXTERNAL REPO
       run: |
+        if [[ "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" == "" ]]; then
+            echo The hardcoded secret does not exist
+          else
+            echo The secret exists
+        fi
         if [[ "${{secrets.REPO_ACCESS_TOKEN}}" == "" ]]; then
             echo The secret does not exist
           else
