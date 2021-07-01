@@ -21,10 +21,10 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        os:  [ubuntu-latest, macOS-latest, windows-latest]
         include:
         
         - os: ubuntu-latest
+          extension: so
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
           listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.so
           mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/ubuntu-latest
@@ -32,6 +32,7 @@ jobs:
           rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
           
         - os: macOS-latest
+          extension: dylib
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
           listLibs: find GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -name \*.dylib
           mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/macOS-latest
@@ -39,6 +40,7 @@ jobs:
           rm: rm -rf GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
           
         - os: windows-latest
+          extension: dll
           out: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
           listLibs: Get-ChildItem -path GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER -r -filter *.dll
           mkdir: mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER; mkdir GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
@@ -63,7 +65,7 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: |
-        cmake --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
+        cmake -D GITHUB_ACTIONS_PREBUILD_EXTENSION=${{matrix.extension}} --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
         git status
       
     - name: list libs
