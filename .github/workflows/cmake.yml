@@ -188,7 +188,7 @@ jobs:
             git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
             git commit -m "first commit"; \
             git branch -M main; \
-            git remote set-url origin https://${{env.REPO_ACCESS_TOKEN}}:x-oauth-basic@github.com/${{github.repository}}.git; \
+            git remote add origin https://${{env.REPO_ACCESS_TOKEN}}:x-oauth-basic@github.com/${{github.repository}}.git; \
             git push; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
