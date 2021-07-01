@@ -65,7 +65,7 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: |
-        cmake -D GITHUB_ACTIONS_PREBUILD_EXTENSION=${{matrix.extension}} --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
+        cmake --build GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER --config ${{env.BUILD_TYPE}}
         git status
       
     - name: list libs
