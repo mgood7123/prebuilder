@@ -129,10 +129,10 @@ jobs:
         
     - name: split files unix
       run: |
-        ls -l
-        chmod +x ./split_files_linix.sh
-        ./split_files_linix.sh
-      
+        chmod +x ./split_files_linux.sh
+        ./split_files_linux.sh
+        git status
+
     - name: add prebuilt
       run: |
         git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
