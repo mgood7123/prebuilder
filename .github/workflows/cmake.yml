@@ -182,7 +182,7 @@ jobs:
     - name: create branch if needed for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push -u origin main https://github.com/${{github.repository}}-${{matrix.os}})
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git branch -M main; git push -u origin main
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: add files for EXTERNAL REPO
