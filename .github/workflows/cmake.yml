@@ -21,7 +21,17 @@ env:
   # IMPORTANT: this MUST NOT conflict with any existing folders
   
   GITHUB_ACTIONS_PREBUILD_OUT_FOLDER: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+  
+  # Set this to true in order to publish builds to dedicated repos
+  # this has the advantage of keeping repository size minimal
+  # history is also kept minimal to reduce total repo size
+  PUSH_TO_EXTERNAL_REPO: ${{ false }}
 
+  # Customize the external repo output folder here
+  # IMPORTANT: this MUST NOT conflict with any existing folders
+  
+  GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER: GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER
+  
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -109,18 +119,44 @@ jobs:
         ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
         git status
 
-    - name: add prebuilt
+    - name: add files for CURRENT REPO
       run: |
         git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
-        
-    - name: commit
+      if: env.PUSH_TO_EXTERNAL_REPO == false
+      
+    - name: commit for CURRENT REPO
       continue-on-error: true
       run: |
         git commit -m "push prebuilts for ${{matrix.os}}"
         git status
-        
-    - name: push
+      if: env.PUSH_TO_EXTERNAL_REPO == false
+
+    - name: push for CURRENT REPO
       run: |
         git push
         git status
+      if: env.PUSH_TO_EXTERNAL_REPO == false
+      
+    - name: add files for EXTERNAL REPO
+      run: |
+        git clone https:/github.com/${{github.ref}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git add -Av
+      if: env.PUSH_TO_EXTERNAL_REPO == true
+                
+    - name: commit for EXTERNAL REPO
+      continue-on-error: true
+      run: |
+        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git commit -m "push prebuilts for ${{matrix.os}}"
+        git status
+      if: env.PUSH_TO_EXTERNAL_REPO == true
+
+    - name: push for EXTERNAL REPO
+      run: |
+        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git push
+        git status
+      if: env.PUSH_TO_EXTERNAL_REPO == true
