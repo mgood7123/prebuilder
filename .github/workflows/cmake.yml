@@ -188,7 +188,7 @@ jobs:
           git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
           git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; \
           git branch -M main; \
-          git push -u origin HEAD; \
+          git push https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}} -u origin HEAD; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
