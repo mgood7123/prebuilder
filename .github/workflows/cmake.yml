@@ -169,23 +169,22 @@ jobs:
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
     - name: set credential helper for EXTERNAL REPO
-      uses: fusion-engineering/setup-git-credentials@v2
-      with:
-        credentials: https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/
+#      uses: fusion-engineering/setup-git-credentials@v2
+#      with:
+#        credentials: https://${{github.repository_owner}}:@github.com/
+      run: |
+        git config credential.https://github.com/.helper "! f() { echo username=${{github.repository_owner}}; echo password=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; };f"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: clone EXTERNAL REPO
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
-      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
 
     - name: create branch if needed for EXTERNAL REPO
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push -u origin main https://github.com/${{github.repository}}-${{matrix.os}})
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git; git branch -M main; git push -u origin HEAD
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: add files for EXTERNAL REPO
