@@ -171,7 +171,6 @@ jobs:
     - name: CONFIG for EXTERNAL REPO
       run: |
         git config --local --unset-all http.https://github.com/.extraheader
-        git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${{env.REPO_ACCESS_TOKEN}}"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: clone EXTERNAL REPO
