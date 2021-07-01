@@ -192,7 +192,6 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            export GH_TOKEN=${{github.token}}
             export DEBUG=1
             gh auth login --with-token; \
             git push --set-upstream origin main; \
