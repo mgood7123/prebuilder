@@ -192,7 +192,7 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            gh auth status; \
+            gh auth login --with-token << ${{env.REPO_ACCESS_TOKEN}}; \
             git push --set-upstream origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
