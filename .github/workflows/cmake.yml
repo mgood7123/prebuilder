@@ -18,15 +18,16 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        os:  [ubuntu-latest, macOS-latest, windows-latest]
+        os:  [macOS-latest]
+#         os:  [ubuntu-latest, macOS-latest, windows-latest]
         include:
-        - os: ubuntu-latest
-          out: prebuilt/ubuntu-latest
-          listLibs: find build -name \*.so
-          mkdir: mkdir prebuilt; mkdir prebuilt/ubuntu-latest
-          copyLibs: find build -name \*.so -exec cp -v {} prebuilt/ubuntu-latest \;
-          checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
-          rm: rm -rf build
+#         - os: ubuntu-latest
+#           out: prebuilt/ubuntu-latest
+#           listLibs: find build -name \*.so
+#           mkdir: mkdir prebuilt; mkdir prebuilt/ubuntu-latest
+#           copyLibs: find build -name \*.so -exec cp -v {} prebuilt/ubuntu-latest \;
+#           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
+#           rm: rm -rf build
         - os: macOS-latest
           out: prebuilt/macOS-latest
           listLibs: find build -name \*.dylib
@@ -34,13 +35,13 @@ jobs:
           copyLibs: find build -name \*.dylib -exec cp -v {} prebuilt/macOS-latest \;
           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
           rm: rm -rf build
-        - os: windows-latest
-          out: prebuilt/windows-latest
-          listLibs: Get-ChildItem -path build -r -filter *.dll
-          mkdir: mkdir prebuilt; mkdir prebuilt/windows-latest
-          copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination prebuilt/windows-latest
-          checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
-          rm: Remove-Item -Recurse -Force build
+#         - os: windows-latest
+#           out: prebuilt/windows-latest
+#           listLibs: Get-ChildItem -path build -r -filter *.dll
+#           mkdir: mkdir prebuilt; mkdir prebuilt/windows-latest
+#           copyLibs: Get-ChildItem -path build -r -filter *.dll | Copy-Item -v -Destination prebuilt/windows-latest
+#           checkout: git branch --remote --list \*GITHUB_PREBUILTS_BOT | grep GITHUB_PREBUILTS_BOT && git switch GITHUB_PREBUILTS_BOT || git checkout -b GITHUB_PREBUILTS_BOT
+#           rm: Remove-Item -Recurse -Force build
 
     steps:
     - uses: actions/checkout@v2
