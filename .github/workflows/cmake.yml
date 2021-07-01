@@ -168,12 +168,6 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-    - name: config for EXTERNAL REPO
-      run: |
-        git config --local --unset-all 'http.https://github.com/.extraheader'
-        git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ${{env.REPO_ACCESS_TOKEN}}
-      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
-
     - name: clone EXTERNAL REPO
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
