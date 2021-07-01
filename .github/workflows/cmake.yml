@@ -192,7 +192,9 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            echo ${{env.GITHUB_TOKEN}} | gh auth login --with-token; \
+            export GH_TOKEN=${{github.token}}
+            export DEBUG=1
+            gh auth login --with-token; \
             git push --set-upstream origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
