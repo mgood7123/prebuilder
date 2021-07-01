@@ -26,7 +26,7 @@ env:
   # this has the advantage of keeping repository size minimal
   # history is also kept minimal to reduce total repo size
   
-  PUSH_TO_EXTERNAL_REPO: false
+  PUSH_TO_EXTERNAL_REPO: true
 
   # Customize the external repo output folder here
   # IMPORTANT: this MUST NOT conflict with any existing folders
@@ -140,8 +140,9 @@ jobs:
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
     - name: add files for EXTERNAL REPO
+        # repo may exist but empty, so create it
       run: |
-        git clone https:/github.com/${{github.ref}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git clone https://github.com/${{github.ref}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} || (mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}; cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}; git init; git branch -M main; git branch -u origin/main; git remote add origin https://github.com/${{github.ref}}-${{matrix.os}}.git)
         mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git add -Av
