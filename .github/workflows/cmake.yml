@@ -142,14 +142,28 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
-    - name: add files for EXTERNAL REPO
+    - name: clone EXTERNAL REPO
         # repo may exist but empty, so create it
         # https://${{github.repository_owner}}:${{github.token}}@github.com
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
+    - name: create branch if needed for EXTERNAL REPO
+        # repo may exist but empty, so create it
+        # https://${{github.repository_owner}}:${{github.token}}@github.com
+      run: |
+        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || (touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; git branch -M main)
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
+    - name: add files for EXTERNAL REPO
+        # repo may exist but empty, so create it
+        # https://${{github.repository_owner}}:${{github.token}}@github.com
+      run: |
         mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-        git branch -M main
+        git checkout main
         git add -Av
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
