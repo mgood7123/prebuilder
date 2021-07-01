@@ -168,6 +168,13 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
+    - name: CONFIG for EXTERNAL REPO
+      run: |
+        git config --local --unset-all http.https://github.com/.extraheader
+        git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${{env.REPO_ACCESS_TOKEN}}"
+        git config credential.https://github.com/.helper "! f() { echo username=${{github.repository_owner}}; echo password=${{env.REPO_ACCESS_TOKEN}}; };f"
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
     - name: clone EXTERNAL REPO
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
@@ -182,9 +189,6 @@ jobs:
           git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
           git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; \
           git branch -M main; \
-          git config --local --unset-all http.https://github.com/.extraheader
-          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${{env.REPO_ACCESS_TOKEN}}"
-          git config credential.https://github.com/.helper "! f() { echo username=${{github.repository_owner}}; echo password=${{env.REPO_ACCESS_TOKEN}}; };f";
           git push -u origin HEAD; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
