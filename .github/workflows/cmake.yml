@@ -50,6 +50,7 @@ jobs:
       run: |
         git pull
         git status
+        
     - name: checkout GITHUB_PREBUILTS_BOT 
       run: |
         ${{matrix.checkout}}
