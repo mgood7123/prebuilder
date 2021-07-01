@@ -14,4 +14,4 @@ set_target_properties(
     SUFFIX ".${GITHUB_ACTIONS_PREBUILD_EXTENSION}"
 )
 
-target_link_libraries(mainExecutable.${GITHUB_ACTIONS_PREBUILD_EXTENSION})
+target_link_libraries(mainExecutable)
