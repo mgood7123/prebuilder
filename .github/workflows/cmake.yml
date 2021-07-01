@@ -168,10 +168,10 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-    - name: CONFIG for EXTERNAL REPO
-      run: |
-        git config --local --unset-all http.https://github.com/.extraheader
-      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+#    - name: CONFIG for EXTERNAL REPO
+#      run: |
+#        git config --local --unset-all http.https://github.com/.extraheader
+#      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: clone EXTERNAL REPO
       run: |
@@ -189,6 +189,8 @@ jobs:
             git commit -m "first commit"; \
             git branch -M main; \
             git remote add origin https://${{env.REPO_ACCESS_TOKEN}}:x-oauth-basic@github.com/${{github.repository}}-${{matrix.os}}.git; \
+            git status; \
+            git remote show origin; \
             git push --set-upstream origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
