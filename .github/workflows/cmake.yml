@@ -35,15 +35,15 @@ jobs:
         
         - os: ubuntu-latest
           extension: so
-          get_chmod: stat --format \\\"%a\\\"
+          get_chmod: stat --format \\"%a\\"
 
         - os: macOS-latest
           extension: dylib
-          get_chmod: stat -f \\\"%OLp\\\"
+          get_chmod: stat -f \\"%OLp\\"
 
         - os: windows-latest
           extension: dll
-          get_chmod: stat --format \\\"%a\\\"
+          get_chmod: stat --format \\"%a\\"
 
     defaults:
       run:
