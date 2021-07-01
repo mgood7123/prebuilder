@@ -177,7 +177,7 @@ jobs:
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || ( \
-          git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git; \
+          git remote show origin; \
           touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
           git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
           git commit -m "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT"; \
