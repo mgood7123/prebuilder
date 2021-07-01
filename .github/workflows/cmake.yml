@@ -4,8 +4,8 @@ on:
   push:
     branches: [ main ]
 
-concurrency: 
-  group: ${{ github.head_ref }}
+concurrency:
+  group: BUILD_JOB
   cancel-in-progress: true
 
 env:
