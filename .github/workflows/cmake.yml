@@ -35,24 +35,26 @@ jobs:
         
         - os: ubuntu-latest
           extension: so
-          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/ubuntu-latest
-          listLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.so
-          copyLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.so -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/ubuntu-latest/ \;
-          rm: rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
+          listLibs_S: find
+          listLibs_E: -name \*
+          copyLibs_S: | -exec cp -v {}
+          copyLibs_E: \;
+          rm: rm -rf
           
         - os: macOS-latest
           extension: dylib
-          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/macOS-latest
-          listLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.dylib
-          copyLibs: find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.dylib -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/macOS-latest/ \;
-          rm: rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
-          
+          listLibs_S: find
+          listLibs_E: -name \*
+          copyLibs_S: | -exec cp -v {}
+          copyLibs_E: \;
+          rm: rm -rf
+
         - os: windows-latest
           extension: dll
-          out: ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/windows-latest
-          listLibs: Get-ChildItem -path ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -r -filter *.dll
-          copyLibs: Get-ChildItem -path ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -r -filter *.dll | Copy-Item -v -Destination ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/windows-latest/
-          rm: Remove-Item -Recurse -Force ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
+          listLibs_S: Get-ChildItem -path
+          listLibs_E: -r -filter *
+          copyLibs: | Copy-Item -v -Destination
+          rm: Remove-Item -Recurse -Force
 
     steps:
     - uses: actions/checkout@v2
@@ -77,7 +79,7 @@ jobs:
       
     - name: list libs
       run: |
-        ${{matrix.listLibs}}
+        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}}
         git status
       
     - name: git config global
@@ -98,19 +100,26 @@ jobs:
         mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
 
-    - name: copy files
+    - name: copy files UNIX
       run: |
-        ${{matrix.copyLibs}}
+        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} ${{matrix.copyLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ ${{matrix.copyLibs_E}}
         git status
+    if matrix.os != 'windows-latest`
         
+    - name: copy files WINDOWS
+      run: |
+        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} ${{matrix.copyLibs}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/
+        git status
+    if matrix.os == 'windows-latest`
+
     - name: rm build
       run: |
-        ${{matrix.rm}}
+        ${{matrix.rm}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
       
     - name: add prebuilt
       run: |
-        git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
+        git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
         
     - name: commit
