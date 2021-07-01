@@ -33,23 +33,23 @@ jobs:
       matrix:
         include:
         
-        - os: ubuntu-latest
-          extension: so
-          listLibs_S: find
-          listLibs_E: -name \*
-          pipe: ${{null}}
-          copyLibs_S: -exec cp -v {}
-          copyLibs_E: \;
-          rm: rm -rf
-          
-        - os: macOS-latest
-          extension: dylib
-          listLibs_S: find
-          listLibs_E: -name \*
-          pipe: ${{null}}
-          copyLibs_S: -exec cp -v {}
-          copyLibs_E: \;
-          rm: rm -rf
+#        - os: ubuntu-latest
+#          extension: so
+#          listLibs_S: find
+#          listLibs_E: -name \*
+#          pipe: ${{null}}
+#          copyLibs_S: -exec cp -v {}
+#          copyLibs_E: \;
+#          rm: rm -rf
+#
+#        - os: macOS-latest
+#          extension: dylib
+#          listLibs_S: find
+#          listLibs_E: -name \*
+#          pipe: ${{null}}
+#          copyLibs_S: -exec cp -v {}
+#          copyLibs_E: \;
+#          rm: rm -rf
 
         - os: windows-latest
           extension: dll
@@ -67,6 +67,9 @@ jobs:
       run: |
         git pull
         git status
+        
+    - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
