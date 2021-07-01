@@ -37,7 +37,7 @@ jobs:
           extension: so
           listLibs_S: find
           listLibs_E: -name \*
-          copyLibs_S: | -exec cp -v {}
+          copyLibs_S: -exec cp -v {}
           copyLibs_E: \;
           rm: rm -rf
           
@@ -45,7 +45,7 @@ jobs:
           extension: dylib
           listLibs_S: find
           listLibs_E: -name \*
-          copyLibs_S: | -exec cp -v {}
+          copyLibs_S: -exec cp -v {}
           copyLibs_E: \;
           rm: rm -rf
 
@@ -53,7 +53,7 @@ jobs:
           extension: dll
           listLibs_S: Get-ChildItem -path
           listLibs_E: -r -filter *
-          copyLibs: | Copy-Item -v -Destination
+          copyLibs: Copy-Item -v -Destination
           rm: Remove-Item -Recurse -Force
 
     steps:
@@ -102,13 +102,13 @@ jobs:
 
     - name: copy files UNIX
       run: |
-        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} ${{matrix.copyLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ ${{matrix.copyLibs_E}}
+        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} | ${{matrix.copyLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ ${{matrix.copyLibs_E}}
         git status
     if matrix.os != 'windows-latest`
         
     - name: copy files WINDOWS
       run: |
-        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} ${{matrix.copyLibs}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/
+        ${{matrix.listLibs_S}} ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ${{matrix.listLibs_E}}.${{matrix.extension}} | ${{matrix.copyLibs}} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/
         git status
     if matrix.os == 'windows-latest`
 
