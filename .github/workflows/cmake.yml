@@ -230,8 +230,20 @@ jobs:
 
     - name: System - EXTERNAL REPO - Verify SSH Key
       run: |
+        echo starting agent
+        echo
         eval $(ssh-agent -s)
+        echo
+        echo started agent
+        echo
+        echo
+        echo adding ssh key
+        echo
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
+        echo
+        echo added ssh key
+        echo
+        echo
         ssh -vT git@github.com || true
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
