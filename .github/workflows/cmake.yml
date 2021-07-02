@@ -253,7 +253,7 @@ jobs:
         if [[ -e GITHUB_ACTIONS_PREBUILD_SSH_KEY_RETURN_FALSE ]]
             then
                 rm GITHUB_ACTIONS_PREBUILD_SSH_KEY_RETURN_FALSE
-                return false
+                false
         fi
       continue-on-error: true
       id: SSH_STEP
@@ -309,10 +309,7 @@ jobs:
                 git commit -m "first commit"
                 git branch -M main
                 git remote add origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
-                git status
-                git remote -v
-                git remote show origin
-                git push --set-upstream origin main
+                git push --set-upstream origin main --force
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
@@ -334,7 +331,12 @@ jobs:
     - name: System - Split files into smaller files
       run: |
         chmod +x ./split_files.sh
-        ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
+        if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
+            then
+                ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ${{matrix.extension}} "${{matrix.get_chmod}}"
+            else
+                ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
+        fi
         git status
 
     - name: Git - CURRENT REPO - Add files
