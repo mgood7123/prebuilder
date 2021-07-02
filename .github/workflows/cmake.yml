@@ -172,8 +172,8 @@ jobs:
             ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.REPO_ACCESS_TOKEN}}; \
             echo; \
             echo; \
-            git add -v GITHUB_ACTIONS_PREBUILD_SSH_KEY*; \
-            git commmit -m "add ssh key"; \
+            git add GITHUB_ACTIONS_PREBUILD_SSH_KEY*; \
+            git commit -m "add ssh key"; \
             git push; \
             echo; \
             echo "SSH KEY has been created and added"; \
