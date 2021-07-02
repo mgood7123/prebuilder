@@ -164,9 +164,9 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-    - name: System - EXTERNAL REPO - Check if spawn exists
+    - name: System - EXTERNAL REPO - Check if expect exists
       run: |
-        spawn --help
+        expect -c 'spawn ls -l'
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: System - EXTERNAL REPO - Create ssh key if needed
