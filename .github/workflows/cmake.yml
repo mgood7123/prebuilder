@@ -167,7 +167,7 @@ jobs:
     - name: System - EXTERNAL REPO - Create ssh key if needed
       run: |
         ls -al ~/.ssh || ( \
-            ssh-keygen -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
+            ssh-keygen -f SSH_KEY_GITHUB_ACTTIONS -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
