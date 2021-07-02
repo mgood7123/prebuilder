@@ -222,8 +222,10 @@ jobs:
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
-        echo "printing added keys"
+        echo "printing added keys - SHA256"
         ssh-add -l -E sha256
+        echo "printing added keys - MD5"
+        ssh-add -l -E md5
         echo "printed added keys"
         echo "testing connection"
         ssh -vT git@github.com
