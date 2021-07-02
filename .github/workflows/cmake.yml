@@ -301,17 +301,15 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
-        eval $(ssh-agent -s)
-        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
         if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
             then
                 if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
                     then
-                        git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                        git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
                 fi
             else
                 mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-                git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
@@ -331,8 +329,8 @@ jobs:
                 git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
                 git branch -M main
-                git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
-                git push --set-upstream origin main --force
+                git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git
+                git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
@@ -390,8 +388,10 @@ jobs:
                 eval $(ssh-agent -s)
                 ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                git push --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+            else
+                git push
         fi
-        git push
         git status
 
     - name: Git - Add submodule
