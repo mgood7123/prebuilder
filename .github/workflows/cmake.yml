@@ -243,7 +243,7 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            git push --set-upstream origin main --repository=ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git; \
+            git push --set-upstream origin main --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
