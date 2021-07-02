@@ -9,18 +9,27 @@ concurrency:
   cancel-in-progress: true
 
 env:
+
+
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  
   BUILD_TYPE: Debug
+  
+  
   
   # Customize the build folder here
   # IMPORTANT: this MUST NOT conflict with any existing folders
   
   GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER: GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER
+  
+  
 
   # Customize the output folder here
   # IMPORTANT: this MUST NOT conflict with any existing folders
   
   GITHUB_ACTIONS_PREBUILD_OUT_FOLDER: GITHUB_ACTIONS_PREBUILD_OUT_FOLDER
+  
+  
   
   # Set this to true in order to publish builds to dedicated repos
   # this has the advantage of keeping repository size minimal
@@ -29,11 +38,15 @@ env:
   # IMPORTANT: this requires a PUBLIC_ACCESS_TOKEN
   
   PUSH_TO_EXTERNAL_REPO: true
+  
+  
 
   # Customize the external repo output folder here
   # IMPORTANT: this MUST NOT conflict with any existing folders
   
   GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER: GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER
+  
+  
   
   # Put your secret here
   # to create a secret, go to
@@ -64,7 +77,7 @@ jobs:
       contents: write
 
     strategy:
-#      fail-fast: false
+      fail-fast: false
       max-parallel: 1
       matrix:
         include:
