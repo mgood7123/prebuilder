@@ -88,93 +88,99 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: pull
+    - name: Git - Pull
       run: |
         git pull
         git status
         
-    - name: Configure CMake
+    - name: CMake - Configure
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cmake -D GITHUB_ACTIONS_PREBUILD_EXTENSION=${{matrix.extension}} -B ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         git status
 
-    - name: Build
+    - name: CMake - Build
       # Build your program with the given configuration
       run: |
         cmake --build ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} --config ${{env.BUILD_TYPE}}
         git status
       
-    - name: list libs
+    - name: System - List libraries
       run: |
         find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}}
         git status
       
-    - name: git config global
+    - name: Git - Configure git global user email and user name
       run: |
         git config --global user.email "GITHUB_ACTIONS_PREBUILD";
         git config --global user.name "GITHUB_ACTIONS_PREBUILD"
         git status
         
-    - name: mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
+    - name: System - Create <Library Output> directory
       continue-on-error: true
       run: |
         mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}
         git status
         
-    - name: mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
+    - name: System - Create <Library Output>/<operating system> directory
       continue-on-error: true
       run: |
         mkdir ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
 
-    - name: copy files
+    - name: System - Copy files from build directory to <Library Output>/<operating system> directory
       run: |
         find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}} -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ \;
         git status
         
-    - name: rm build
+    - name: System - Remove build directory
       run: |
         rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
         
-    - name: split files
+    - name: System - Split files into smaller files
       run: |
         chmod +x ./split_files.sh
         ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
         git status
 
-    - name: add files for CURRENT REPO
+    - name: Git - CURRENT REPO - Add files
       run: |
         git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
-    - name: commit for CURRENT REPO
+    - name: Git - CURRENT REPO - Commit
       continue-on-error: true
       run: |
         git commit -m "push prebuilts for ${{matrix.os}}"
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-    - name: push for CURRENT REPO
+    - name: Git - CURRENT REPO - Push
       run: |
         git push
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
-
-    - name: CONFIG for EXTERNAL REPO
+      
+    - name: System - EXTERNAL REPO - Check for existing keys
       run: |
-        git config --local --unset-all http.https://github.com/.extraheader
+        ls -al ~/.ssh
+
+    - name: System - EXTERNAL REPO - Configure shh key for
+      run: |
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
+            
+        )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: clone EXTERNAL REPO
+    - name: Git - EXTERNAL REPO - Clone
       run: |
         git clone https://github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: create branch if needed for EXTERNAL REPO
+    - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || ( \
@@ -192,14 +198,14 @@ jobs:
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: add files for EXTERNAL REPO
+    - name: Git - EXTERNAL REPO - Add files
       run: |
         mv ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/* ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git add -Av
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: commit for EXTERNAL REPO
+    - name: Git - EXTERNAL REPO - Commit
       continue-on-error: true
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
@@ -207,7 +213,7 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: push for EXTERNAL REPO
+    - name: Git - EXTERNAL REPO - Push
       run: |
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git push
