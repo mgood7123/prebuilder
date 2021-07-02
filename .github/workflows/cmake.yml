@@ -233,7 +233,7 @@ jobs:
         echo "unsetting core.sshCommand"
         git config --local --unset-all core.sshCommand || true
         echo "setting core.sshCommand"
-        git config --local core.sshCommand="ssh -i GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        git config --local --type=bool-or-str core.sshCommand="ssh -i GITHUB_ACTIONS_PREBUILD_SSH_KEY"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
