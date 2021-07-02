@@ -72,14 +72,17 @@ jobs:
         - os: ubuntu-latest
           extension: so
           get_chmod: stat --format \"%a\"
+          autocrlf: false
 
         - os: macOS-latest
           extension: dylib
           get_chmod: stat -f \"%OLp\"
+          autocrlf: false
 
         - os: windows-latest
           extension: dll
           get_chmod: stat --format \"%a\"
+          autocrlf: true
 
     defaults:
       run:
@@ -89,7 +92,7 @@ jobs:
     
     - name: Git - Configure automatic line ending conversion
       run: |
-        git config --global core.autocrlf true
+        git config --global core.autocrlf ${{matrix.autocrlf}}
 
     - name: Checkout repository
       uses: actions/checkout@v2
