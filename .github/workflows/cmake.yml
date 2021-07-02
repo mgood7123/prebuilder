@@ -228,6 +228,13 @@ jobs:
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
+    - name: System - EXTERNAL REPO - Verify SSH Key
+      run: |
+        eval $(ssh-agent -s)
+        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
+        ssh -vT git@github.com | true
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
     - name: Git - EXTERNAL REPO - Clone
       run: |
         eval $(ssh-agent -s)
