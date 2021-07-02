@@ -195,10 +195,10 @@ jobs:
             echo "I will now pause to give you time to process all of this"; \
             echo; \
             echo "To continue, please open the SSH session below in your terminal and then exit the session after logging in"; \
-            echo "; \
-            echo "; \
+            echo; \
+            echo; \
             echo "For example:"; \
-            echo "; \
+            echo; \
             echo "ssh <session id>"; \
             echo "<press q key to dismiss tmate prompt message>"; \
             echo "$ exit"; \
