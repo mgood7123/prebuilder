@@ -69,13 +69,13 @@ jobs:
       matrix:
         include:
         
-        - os: ubuntu-latest
-          extension: so
-          get_chmod: stat --format \"%a\"
-
-        - os: macOS-latest
-          extension: dylib
-          get_chmod: stat -f \"%OLp\"
+#        - os: ubuntu-latest
+#          extension: so
+#          get_chmod: stat --format \"%a\"
+#
+#        - os: macOS-latest
+#          extension: dylib
+#          get_chmod: stat -f \"%OLp\"
 
         - os: windows-latest
           extension: dll
@@ -243,12 +243,9 @@ jobs:
         echo
         echo added ssh key
         echo
+        ls -l /dev/tty
         echo
-        which ssh
-        echo call ssh
         ssh -vT git@github.com || true
-        echo call /usr/bin/ssh
-        /usr/bin/ssh -vT git@github.com || true
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
