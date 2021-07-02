@@ -403,14 +403,17 @@ jobs:
                 git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         fi
         git status
-      
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
     - name: Git - Commit submodule
       continue-on-error: true
       run: |
-        git commit -m "push prebuilts for ${{matrix.os}}"
+        git commit -m "update submodule ${{matrix.os}}"
         git status
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - Push submodule
       run: |
         git push
         git status
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
