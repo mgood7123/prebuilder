@@ -234,7 +234,7 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
-        git clone ssh://git@github.com:mgood7123/prebuilder-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Create branch if needed
