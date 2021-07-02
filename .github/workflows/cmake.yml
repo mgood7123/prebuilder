@@ -204,7 +204,7 @@ jobs:
             echo "$ exit"; \
             false; \
         )
-      continue-on-error: true;
+      continue-on-error: true
       id: SSH_STEP
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
