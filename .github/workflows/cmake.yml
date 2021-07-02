@@ -166,11 +166,15 @@ jobs:
 
     - name: System - EXTERNAL REPO - Create ssh key if needed
       run: |
-        ls -al ~/.ssh || ( \
-            ssh-keygen -f SSH_KEY_GITHUB_ACTTIONS -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
+        cat GITHUB_ACTIONS_PREBUILD_SSH_KEY || ( \
+            ssh-keygen -f GITHUB_ACTIONS_PREBUILD_SSH_KEY -t ed25519 -C "GITHUB_ACTIONS_PREBUILD_SSH_KEY" -P ${{env.REPO_ACCESS_TOKEN}}; \
             eval "$(ssh-agent -s)"; \
-            ssh-add SSH_KEY_GITHUB_ACTTIONS <<< ${{env.REPO_ACCESS_TOKEN}}; \
+            ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.REPO_ACCESS_TOKEN}}; \
             echo; \
+            echo; \
+            git add -v GITHUB_ACTIONS_PREBUILD_SSH_KEY*; \
+            git commmit -m "add ssh key"; \
+            git push; \
             echo; \
             echo "SSH KEY has been created and added"; \
             echo; \
@@ -188,7 +192,7 @@ jobs:
             echo "the contents of SSH KEY is"; \
             echo; \
             echo "<SSH KEY CONTENTS BEGIN - ACTUAL CONTENTS BELOW>"; \
-            cat SSH_KEY_GITHUB_ACTTIONS.pub; \
+            cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub; \
             echo "<SSH KEY CONTENTS END - ACTUAL CONTENTS ABOVE>"; \
             echo; \
             echo; \
@@ -209,10 +213,10 @@ jobs:
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
 
-#    - name: Setup tmate session
-#      uses: mxschmitt/action-tmate@v3
-#      if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
-#
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
+
 #    - name: System - EXTERNAL REPO - Configure shh key
 #      run: |
 #        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_DOES_NOT_EXIST && ( \
@@ -242,7 +246,7 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            git push --set-upstream origin main --repository=https://${{github.repository_owner}}:${{env.REPO_ACCESS_TOKEN}}@github.com/${{github.repository}}-${{matrix.os}}.git; \
+            git push --set-upstream origin main --repository=ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
