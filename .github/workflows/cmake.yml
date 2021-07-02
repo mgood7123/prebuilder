@@ -276,7 +276,11 @@ jobs:
             then
                 if [[ -e ~/.ssh/known_hosts ]]
                     then
-                        grep github.com ~/.ssh/known_hosts || ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
+                        grep -q github.com ~/.ssh/known_hosts
+                        if [[ $? != 0 ]]
+                            then
+                                ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
+                        fi
                     else
                         ssh-keyscan github.com 2>&1 > ~/.ssh/known_hosts
                 fi
@@ -344,7 +348,7 @@ jobs:
         fi
         git status
 
-    - name: Git - CURRENT REPO - Add files
+    - name: Git - Add files
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
@@ -356,7 +360,6 @@ jobs:
                 git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         fi
         git status
-      if: env.PUSH_TO_EXTERNAL_REPO == 'false'
       
     - name: Git - Commit
       continue-on-error: true
