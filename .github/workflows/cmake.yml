@@ -209,19 +209,19 @@ jobs:
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
-
-    - name: System - EXTERNAL REPO - Configure shh key
-      run: |
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_DOES_NOT_EXIST && ( \
-        ) || ( \
-            cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
-                \
-            ) \
-        ) \
-      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
+#
+#    - name: System - EXTERNAL REPO - Configure shh key
+#      run: |
+#        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_DOES_NOT_EXIST && ( \
+#        ) || ( \
+#            cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
+#                \
+#            ) \
+#        ) \
+#      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
@@ -242,7 +242,7 @@ jobs:
             git status; \
             git remote -v; \
             git remote show origin; \
-            git push --set-upstream origin main; \
+            printf "${{github.repository_owner}}\n${{env.REPO_ACCESS_TOKEN}}\n" | git push --set-upstream origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
