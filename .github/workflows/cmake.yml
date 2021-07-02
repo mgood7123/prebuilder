@@ -230,12 +230,13 @@ jobs:
         echo "testing connection"
         ssh -T git@github.com || true
         echo "tested connection"
-        export GIT_SSH_COMMAND="$(which ssh) -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
         declare -p GIT_SSH_COMMAND
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
+        declare -p GIT_SSH_COMMAND
         git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
