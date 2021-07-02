@@ -274,7 +274,12 @@ jobs:
       run: |
         if [[ -e ~/.ssh ]]
             then
-                grep github.com ~/.ssh/known_hosts || ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
+                if [[ -e ~/.ssh/known_hosts ]]
+                    then
+                        grep github.com ~/.ssh/known_hosts || ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
+                    else
+                        ssh-keyscan github.com 2>&1 > ~/.ssh/known_hosts
+                fi
             else
                 mkdir ~/.ssh
                 ssh-keyscan github.com 2>&1 > ~/.ssh/known_hosts
@@ -297,7 +302,7 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
-        if [[ ! -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
+        if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
                 eval $(ssh-agent -s)
                 ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
