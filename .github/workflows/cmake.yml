@@ -46,12 +46,8 @@ env:
   # finally copy its token id
   
   # next, go to your repository containing this workflow
-  # Settings -> Environments -> New Environment
-  
-  # give your new environment a name and then click [Configure Environment]
-  
-  # scroll down to [Environment secrets] and click [Add Secret]
-  
+  # Settings -> Secrets -> New repository secret
+
   # in the [Value] field, past the token id that you copied earlier
   
   # in the [Name] field, enter a name, replacing spaces with underscore (_)
@@ -168,10 +164,10 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-#    - name: CONFIG for EXTERNAL REPO
-#      run: |
-#        git config --local --unset-all http.https://github.com/.extraheader
-#      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+    - name: CONFIG for EXTERNAL REPO
+      run: |
+        git config --local --unset-all http.https://github.com/.extraheader
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: clone EXTERNAL REPO
       run: |
