@@ -226,6 +226,7 @@ jobs:
       run: |
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
+        mkdir ~/.ssh || true
         ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
