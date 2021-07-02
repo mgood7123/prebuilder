@@ -116,26 +116,27 @@ jobs:
         
     - name: System - Setup configuration variable needed by super-projects
       run: |
-        git config -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO
-        if [[ $? != 0 ]]
+        if [[ $(git config -l | grep -q GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO; echo $?) != "0" ]]
             then
-                git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                git config GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                echo "'git config GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' has been updated"
             else
-                if [[ $(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) != ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
+                if [[ $(git config --get GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO) != ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
                     then
                         echo
-                        echo "WARNING: values of 'config get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO' and 'env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER' differ"
+                        echo "WARNING: values of 'config get GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' and 'env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER' differ"
                         echo
                         if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
-                            echo
-                            echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER must not exist"
-                            echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}' to another location, or remove it"
-                            echo
-                            false
+                            then
+                                echo
+                                echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER must not exist"
+                                echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}' to another location, or remove it"
+                                echo
+                                false
                         fi
-                        mv -v $(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-                        git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-                        echo "'git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO' has been updated"
+                        mv -v $(git config --get GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO) ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                        git config GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                        echo "'git config GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' has been updated"
                 fi
         fi
         true
@@ -143,22 +144,23 @@ jobs:
     - name: System - Check if build folder exists
       run: |
         if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ]]
-            echo
-            echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER must not exist"
-            echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}' to another location, or remove it"
-            echo
-            false
+            then
+                echo
+                echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER must not exist"
+                echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}' to another location, or remove it"
+                echo
+                false
         fi
 
     - name: Git - Clone submodules
       run: |
         git submodule init
-        git submodule denit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git submodule deinit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git submodule update
 
         git submodule foreach --recursive "\
                 git submodule init; \
-                git config -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && git submodule denit \$(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO); \
+                git config -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && git submodule deinit \$(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO); \
                 git submodule update; \
         "
 
@@ -326,8 +328,7 @@ jobs:
             then
                 if [[ -e ~/.ssh/known_hosts ]]
                     then
-                        grep -q github.com ~/.ssh/known_hosts
-                        if [[ $? != 0 ]]
+                        if [[ $(grep -q github.com ~/.ssh/known_hosts; echo $?) != "0" ]]
                             then
                                 ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
                         fi
@@ -354,6 +355,10 @@ jobs:
                 if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
                     then
                         git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                    else
+                        git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                        git checkout main
                 fi
             else
                 mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
@@ -386,9 +391,9 @@ jobs:
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                find ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} -name \*.SPLIT_FILE\* -exec rm -f {} \;
+                find ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} -name \*.SPLIT_\* -exec rm -f {} \;
             else
-                find ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} -name \*.SPLIT_FILE\* -exec rm -f {} \;
+                find ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} -name \*.SPLIT_\* -exec rm -f {} \;
         fi
         git status
 
@@ -436,7 +441,7 @@ jobs:
             then
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
         fi
-        git commit -m "push prebuilts for ${{matrix.os}}"
+        git commit -m "push prebuilts for ${{matrix.os}}" || true
         git status
 
     - name: Git - Push
@@ -466,7 +471,7 @@ jobs:
     - name: Git - Commit submodule
       continue-on-error: true
       run: |
-        git commit -m "update submodule ${{matrix.os}}"
+        git commit -m "update submodule ${{matrix.os}}" || true
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
