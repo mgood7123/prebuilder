@@ -303,23 +303,35 @@ jobs:
       run: |
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
-        git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
+            then
+                if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
+                    then
+                        git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                fi
+            else
+                mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+        fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
-        if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
+        if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}/DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
                 eval $(ssh-agent -s)
                 ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
-                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-                rm -rf .git
-                git init
+                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                
+                # TODO
+                
+                # rm -rf .git
+                # git init
                 touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
                 git branch -M main
-                git remote add origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
                 git push --set-upstream origin main --force
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
@@ -328,7 +340,7 @@ jobs:
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}} -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/ \;
+                find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}} -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}/ \;
             else
                 find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}} -exec cp -v {} ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}/ \;
         fi
@@ -344,7 +356,7 @@ jobs:
         chmod +x ./split_files.sh
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ${{matrix.extension}} "${{matrix.get_chmod}}"
+                ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
             else
                 ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "${{matrix.get_chmod}}"
         fi
@@ -354,7 +366,7 @@ jobs:
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
                 git add -Av
             else
                 git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
@@ -366,7 +378,7 @@ jobs:
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
         fi
         git commit -m "push prebuilts for ${{matrix.os}}"
         git status
@@ -376,8 +388,29 @@ jobs:
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
                 eval $(ssh-agent -s)
-                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
+                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}/${{matrix.os}}
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         fi
+        git push
+        git status
+
+    - name: Git - Add submodule
+      run: |
+        if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
+            then
+                git add -v ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+            else
+                git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
+        fi
+        git status
+      
+    - name: Git - Commit submodule
+      continue-on-error: true
+      run: |
+        git commit -m "push prebuilts for ${{matrix.os}}"
+        git status
+
+    - name: Git - Push submodule
+      run: |
         git push
         git status
