@@ -111,7 +111,7 @@ jobs:
         find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}}
         git status
       
-    - name: Git - Configure git global user email and user name
+    - name: Git - Configure global user email and user name
       run: |
         git config --global user.email "GITHUB_ACTIONS_PREBUILD";
         git config --global user.name "GITHUB_ACTIONS_PREBUILD"
@@ -163,16 +163,27 @@ jobs:
         git push
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
-      
-    - name: System - EXTERNAL REPO - Check for existing keys
-      run: |
-        ls -al ~/.ssh
 
-    - name: System - EXTERNAL REPO - Configure shh key for
+    - name: System - EXTERNAL REPO - Check if spawn exists
       run: |
-        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
-            
+        spawn --help
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
+    - name: System - EXTERNAL REPO - Create ssh key if needed
+      run: |
+        ls -al ~/.ssh || ( \
+            ssh-keygen -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
         )
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
+    - name: System - EXTERNAL REPO - Configure shh key
+      run: |
+        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_DOES_NOT_EXIST && ( \
+        ) || ( \
+            cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
+                \
+            ) \
+        ) \
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
