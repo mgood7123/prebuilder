@@ -86,6 +86,11 @@ jobs:
         shell: bash
 
     steps:
+    - name: Git - configure automatic line ending conversion
+        run: |
+          git config --global core.autocrlf true
+          
+    - name: Checkout repository
     - uses: actions/checkout@v2
     
     - name: Git - Pull
