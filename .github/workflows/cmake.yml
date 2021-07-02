@@ -185,12 +185,10 @@ jobs:
             echo; \
             echo "click 'Add SSH Key'"; \
             echo; \
-            ls -l; \
-            echo; \
             echo "the contents of SSH KEY is"; \
             echo; \
             echo "<SSH KEY CONTENTS BEGIN - ACTUAL CONTENTS BELOW>"; \
-            cat SSH_KEY_GITHUB_ACTTIONS; \
+            cat SSH_KEY_GITHUB_ACTTIONS.pub; \
             echo "<SSH KEY CONTENTS END - ACTUAL CONTENTS ABOVE>"; \
             echo; \
             echo; \
