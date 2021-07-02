@@ -239,11 +239,11 @@ jobs:
             git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT; \
             git commit -m "first commit"; \
             git branch -M main; \
-            git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git; \
+            git remote add origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git; \
             git status; \
             git remote -v; \
             git remote show origin; \
-            git push --set-upstream origin main --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git; \
+            git push --set-upstream origin main; \
         )
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
