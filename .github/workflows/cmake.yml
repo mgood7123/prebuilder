@@ -222,6 +222,12 @@ jobs:
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
+        echo "printing added keys"
+        ssh-add -l -E sha256
+        echo "printed added keys"
+        echo "testing connection"
+        ssh -vT git@github.com
+        echo "tested connection"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
