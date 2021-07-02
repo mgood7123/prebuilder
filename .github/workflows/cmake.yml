@@ -334,6 +334,16 @@ jobs:
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
+    - name: System - Clean split files
+      run: |
+        if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
+            then
+                find ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} -name \*.SPLIT_FILE\* -exec rm -f {} \;
+            else
+                find ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} -name \*.SPLIT_FILE\* -exec rm -f {} \;
+        fi
+        git status
+
     - name: System - Copy files from build directory
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
