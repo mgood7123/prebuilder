@@ -168,8 +168,50 @@ jobs:
       run: |
         ls -al ~/.ssh || ( \
             ssh-keygen -f SSH_KEY_GITHUB_ACTTIONS -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
+            eval "$(ssh-agent -s)"; \
+            ssh-add SSH_KEY_GITHUB_ACTTIONS; \
+            echo; \
+            echo; \
+            echo "SSH KEY has been created and added"; \
+            echo; \
+            echo; \
+            echo "please go to <Your profile> -> Settings -> SSH and GPG Keys"; \
+            echo; \
+            echo "Click 'New SSH key' or 'Add SSH key'"; \
+            echo; \
+            echo "In the "Title" field, add a descriptive label for the new key"; \
+            echo; \
+            echo "Paste your key into the `Key` field"; \
+            echo; \
+            echo "click 'Add SSH Key'"; \
+            echo; \
+            echo "the contents of SSH KEY is"; \
+            echo; \
+            echo "<SSH KEY CONTENTS BEGIN - ACTUAL CONTENTS BELOW>"; \
+            cat SSH_KEY_GITHUB_ACTTIONS; \
+            echo "<SSH KEY CONTENTS END - ACTUAL CONTENTS ABOVE>"; \
+            echo; \
+            echo; \
+            echo "I will now pause to give you time to process all of this"; \
+            echo; \
+            echo "To continue, please open the SSH session below in your terminal and then exit the session after logging in"; \
+            echo "; \
+            echo "; \
+            echo "For example:"; \
+            echo "; \
+            echo "ssh <session id>"; \
+            echo "<press q key to dismiss tmate prompt message>"; \
+            echo "$ exit"; \
+            false; \
         )
+      continue-on-error: true;
+      id: SSH_STEP
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
 
     - name: System - EXTERNAL REPO - Configure shh key
       run: |
