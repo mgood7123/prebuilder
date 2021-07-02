@@ -220,7 +220,7 @@ jobs:
       run: |
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
-        ssh-agent
+        eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
         ssh -vT git@github.com | grep "successfully authenticated"
@@ -229,7 +229,7 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
-        ssh-agent
+        eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
         ssh -T git@github.com | grep -q "successfully authenticated"
@@ -239,7 +239,7 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
-        ssh-agent
+        eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
         ssh -T git@github.com | grep -q "successfully authenticated"
@@ -277,7 +277,7 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Push
       run: |
-        ssh-agent
+        eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
         ssh -T git@github.com | grep -q "successfully authenticated"
