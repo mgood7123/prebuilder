@@ -230,7 +230,8 @@ jobs:
         echo "testing connection"
         ssh -vT git@github.com || true
         echo "tested connection"
-        git config core.sshCommand="ssh -i GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        git config --local --unset-all core.sshCommand
+        #git config --local core.sshCommand="ssh -i GITHUB_ACTIONS_PREBUILD_SSH_KEY"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
