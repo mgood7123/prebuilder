@@ -244,7 +244,11 @@ jobs:
         echo added ssh key
         echo
         echo
+        which ssh
+        echo call ssh
         ssh -vT git@github.com || true
+        echo call /usr/bin/ssh
+        /usr/bin/ssh -vT git@github.com || true
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
