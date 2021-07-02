@@ -181,9 +181,11 @@ jobs:
             echo; \
             echo "In the "Title" field, add a descriptive label for the new key"; \
             echo; \
-            echo "Paste your key into the `Key` field"; \
+            echo "Paste your key into the 'Key' field"; \
             echo; \
             echo "click 'Add SSH Key'"; \
+            echo; \
+            ls -l; \
             echo; \
             echo "the contents of SSH KEY is"; \
             echo; \
