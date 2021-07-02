@@ -230,18 +230,35 @@ jobs:
         echo "testing connection"
         ssh -T git@github.com || true
         echo "tested connection"
-        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
-        declare -p GIT_SSH_COMMAND
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
+        echo "printing added keys - SHA256"
+        ssh-add -l -E sha256
+        echo "printing added keys - MD5"
+        ssh-add -l -E md5
+        echo "printed added keys"
+        echo "testing connection"
+        ssh -T git@github.com || true
+        echo "tested connection"
+        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
         declare -p GIT_SSH_COMMAND
         git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
+        echo "printing added keys - SHA256"
+        ssh-add -l -E sha256
+        echo "printing added keys - MD5"
+        ssh-add -l -E md5
+        echo "printed added keys"
+        echo "testing connection"
+        ssh -T git@github.com || true
+        echo "tested connection"
+        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        declare -p GIT_SSH_COMMAND
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || ( \
             rm -rf .git; \
@@ -275,6 +292,16 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Push
       run: |
+        echo "printing added keys - SHA256"
+        ssh-add -l -E sha256
+        echo "printing added keys - MD5"
+        ssh-add -l -E md5
+        echo "printed added keys"
+        echo "testing connection"
+        ssh -T git@github.com || true
+        echo "tested connection"
+        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        declare -p GIT_SSH_COMMAND
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git push
         git status
