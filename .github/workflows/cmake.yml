@@ -223,7 +223,8 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
-        ssh -vT git@github.com | grep "successfully authenticated"
+        ssh -vT git@github.com
+        ssh -T git@github.com |& grep "successfully authenticated"
         echo "tested connection"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
@@ -232,7 +233,7 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
-        ssh -T git@github.com | grep -q "successfully authenticated"
+        ssh -T git@github.com |& grep "successfully authenticated"
         echo "tested connection"
         git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
@@ -242,7 +243,7 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
-        ssh -T git@github.com | grep -q "successfully authenticated"
+        ssh -T git@github.com |& grep "successfully authenticated"
         echo "tested connection"
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || ( \
@@ -280,7 +281,7 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
         echo "testing connection"
-        ssh -T git@github.com | grep -q "successfully authenticated"
+        ssh -T git@github.com |& grep "successfully authenticated"
         echo "tested connection"
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git push
