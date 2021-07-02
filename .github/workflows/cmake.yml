@@ -228,9 +228,10 @@ jobs:
         ssh-add -l -E md5
         echo "printed added keys"
         echo "testing connection"
-        ssh -vT git@github.com || true
+        ssh -T git@github.com || true
         echo "tested connection"
-        git config --global core.sshCommand "ssh -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        export GIT_SSH_COMMAND="$(which ssh) -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
+        declare -p GIT_SSH_COMMAND
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
