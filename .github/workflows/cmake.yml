@@ -219,6 +219,8 @@ jobs:
     - name: System - EXTERNAL REPO - Configure SSH Key
       run: |
         eval "$(ssh-agent -s)"
+        echo "$SSH_AUTH_SOCK" > GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AUTH_SOCK
+        echo "$SSH_AGENT_PID" > GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AGENT_PID
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY
         chmod 400 GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PUBLIC_ACCESS_TOKEN}}
@@ -228,12 +230,14 @@ jobs:
         ssh-add -l -E md5
         echo "printed added keys"
         echo "testing connection"
-        ssh -T git@github.com || true
+        ssh -vT git@github.com || true
         echo "tested connection"
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
+        SSH_AUTH_SOCK=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AUTH_SOCK)
+        SSH_AGENT_PID=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AGENT_PID)
         echo "printing added keys - SHA256"
         ssh-add -l -E sha256
         echo "printing added keys - MD5"
@@ -242,23 +246,13 @@ jobs:
         echo "testing connection"
         ssh -T git@github.com || true
         echo "tested connection"
-        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
-        declare -p GIT_SSH_COMMAND
         git clone ssh://git@github.com/${{github.repository}}-${{matrix.os}} ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Create branch if needed
       run: |
-        echo "printing added keys - SHA256"
-        ssh-add -l -E sha256
-        echo "printing added keys - MD5"
-        ssh-add -l -E md5
-        echo "printed added keys"
-        echo "testing connection"
-        ssh -T git@github.com || true
-        echo "tested connection"
-        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
-        declare -p GIT_SSH_COMMAND
+        SSH_AUTH_SOCK=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AUTH_SOCK)
+        SSH_AGENT_PID=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AGENT_PID)
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || ( \
             rm -rf .git; \
@@ -292,16 +286,8 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Push
       run: |
-        echo "printing added keys - SHA256"
-        ssh-add -l -E sha256
-        echo "printing added keys - MD5"
-        ssh-add -l -E md5
-        echo "printed added keys"
-        echo "testing connection"
-        ssh -T git@github.com || true
-        echo "tested connection"
-        export GIT_SSH_COMMAND="$(which ssh) -v -i $(pwd)/GITHUB_ACTIONS_PREBUILD_SSH_KEY"
-        declare -p GIT_SSH_COMMAND
+        SSH_AUTH_SOCK=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AUTH_SOCK)
+        SSH_AGENT_PID=$(cat GITHUB_ACTIONS_PREBUILD_SSH_KEY.SSH_AGENT_PID)
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git push
         git status
