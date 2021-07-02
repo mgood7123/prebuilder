@@ -169,7 +169,7 @@ jobs:
         ls -al ~/.ssh || ( \
             ssh-keygen -f SSH_KEY_GITHUB_ACTTIONS -t ed25519 -C "SSH_KEY_GITHUB_ACTTIONS" -P ${{env.REPO_ACCESS_TOKEN}}; \
             eval "$(ssh-agent -s)"; \
-            ssh-add SSH_KEY_GITHUB_ACTTIONS; \
+            ssh-add SSH_KEY_GITHUB_ACTTIONS <<< ${{env.REPO_ACCESS_TOKEN}}; \
             echo; \
             echo; \
             echo "SSH KEY has been created and added"; \
