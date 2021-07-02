@@ -106,7 +106,7 @@ jobs:
       run: |
         git config --global core.autocrlf false
 
-    - name: Checkout repository
+    - name: System - Checkout repository
       uses: actions/checkout@v2
     
     - name: Git - Pull
@@ -114,6 +114,53 @@ jobs:
         git pull
         git status
         
+    - name: System - Setup configuration variable needed by super-projects
+      run: |
+        git config -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO
+        if [[ $? != 0 ]]
+            then
+                git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+            else
+                if [[ $(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) != ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
+                    then
+                        echo
+                        echo "WARNING: values of 'config get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO' and 'env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER' differ"
+                        echo
+                        if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
+                            echo
+                            echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER must not exist"
+                            echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}' to another location, or remove it"
+                            echo
+                            false
+                        fi
+                        mv -v $(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                        git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+                        echo "'git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO' has been updated"
+                fi
+        fi
+
+    - name: System - Check if build folder exists
+      run: |
+        if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ]]
+            echo
+            echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER must not exist"
+            echo "please move '${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}' to another location, or remove it"
+            echo
+            false
+        fi
+
+    - name: Git - Clone submodules
+      run: |
+        git submodule init
+        git submodule denit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git submodule update
+
+        git submodule foreach --recursive "\
+                git submodule init; \
+                git config -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && git submodule denit \$(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO); \
+                git submodule update; \
+        "
+
     - name: CMake - Configure
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -134,7 +181,7 @@ jobs:
       
     - name: Git - Configure global user email and user name
       run: |
-        git config --global user.email "GITHUB_ACTIONS_PREBUILD";
+        git config --global user.email "no_email@no_email.com"
         git config --global user.name "GITHUB_ACTIONS_PREBUILD"
         git status
         
