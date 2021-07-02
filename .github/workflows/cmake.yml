@@ -138,6 +138,7 @@ jobs:
                         echo "'git config GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO' has been updated"
                 fi
         fi
+        true
 
     - name: System - Check if build folder exists
       run: |
