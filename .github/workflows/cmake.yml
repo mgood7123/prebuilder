@@ -168,15 +168,13 @@ jobs:
       run: |
         cat GITHUB_ACTIONS_PREBUILD_SSH_KEY || ( \
             ssh-keygen -f GITHUB_ACTIONS_PREBUILD_SSH_KEY -t ed25519 -C "GITHUB_ACTIONS_PREBUILD_SSH_KEY" -P ${{env.REPO_ACCESS_TOKEN}}; \
-            eval "$(ssh-agent -s)"; \
-            ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.REPO_ACCESS_TOKEN}}; \
             echo; \
             echo; \
             git add GITHUB_ACTIONS_PREBUILD_SSH_KEY*; \
             git commit -m "add ssh key"; \
             git push; \
             echo; \
-            echo "SSH KEY has been created and added"; \
+            echo "SSH KEY has been created"; \
             echo; \
             echo; \
             echo "please go to <Your profile> -> Settings -> SSH and GPG Keys"; \
@@ -206,26 +204,23 @@ jobs:
             echo "ssh <session id>"; \
             echo "<press q key to dismiss tmate prompt message>"; \
             echo "$ exit"; \
-            false; \
+            touch GITHUB_ACTIONS_PREBUILD_SSH_KEY_RETURN_FALSE; \
         )
+        cat GITHUB_ACTIONS_PREBUILD_SSH_KEY_RETURN_FALSE && false || true
       continue-on-error: true
       id: SSH_STEP
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
 
-    - name: Setup tmate session
+    - name: System - EXTERNAL REPO - Setup tmate session if needed
       uses: mxschmitt/action-tmate@v3
       if: env.PUSH_TO_EXTERNAL_REPO == 'true' && steps.SSH_STEP.outcome == 'failure'
 
-#    - name: System - EXTERNAL REPO - Configure shh key
-#      run: |
-#        cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_DOES_NOT_EXIST && ( \
-#        ) || ( \
-#            cat DO_NOT_DELETE_ME.GITHUB_ACTIONS_SSH_KEY_MARKER || ( \
-#                \
-#            ) \
-#        ) \
-#      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+    - name: System - EXTERNAL REPO - Configure SSH Key
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.REPO_ACCESS_TOKEN}}
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
