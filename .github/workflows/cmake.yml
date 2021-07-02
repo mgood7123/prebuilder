@@ -230,6 +230,17 @@ jobs:
         ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
+    - name: System - EXTERNAL REPO - Make sure github.com exists in ~/.ssh/known_hosts
+      run: |
+        if [[ -e ~/.ssh ]]
+            then
+                grep github.com ~/.ssh/known_hosts || ssh-keyscan github.com 2>&1 >> ~/.ssh/known_hosts
+            else
+                mkdir ~/.ssh
+                ssh-keyscan github.com 2>&1 > ~/.ssh/known_hosts
+        fi
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+
     - name: System - EXTERNAL REPO - Verify SSH Key
       run: |
         eval $(ssh-agent -s)
