@@ -35,19 +35,25 @@ these directories will `NOT` link to other repositories and `WILL` take up space
 
 the first time the `Prebuilder` builds something that will be pushed to a `dedicated` repo, it will request for you to add a `SSH Key` to your account, this is required in order to push to external repositories
 
-`Prebuilder` will also request for a `Personal Access Token` (also known as a `PAT`), this is required to encrypt and decrypt the `SSH Key`
+the step `System - EXTERNAL REPO - Create ssh key if needed` will tell you how to do so
 
-if you loose your `PAT` or your `SSH Key` you can easily request a new one by deleting the `SSH Key` that has been added to your repo, and then adding the new `SSH Key` to your account
+`Prebuilder` will also request for a `Secure Password` this is required to encrypt and decrypt the `SSH Key`
 
-the `PAT` is used to provide secure authentication to protect against unauthorized access to your `SSH Key` since the key is required to be pushed to your repo
+if you loose your `Secure Password` or your `SSH Key` you can easily request a new one by deleting the `SSH Key` that has been added to your repo, and then adding the new `SSH Key` to your account
 
-additionally a `PAT` is per user so you can simply use the same `PAT` for all your repositories instead of having to create a new `Deployment Key` for each repo using `Prebuilder`
+the `Secure Password` is used to provide secure authentication to protect against unauthorized access to your `SSH Key` since the key is required to be pushed to your repo
 
-the `PAT` is `ONLY` used for encryption purposes, any value can be used instead of a `PAT`, however a `PAT` or similar is recommended instead of a basic password due to `PAT` having stronger security
+please see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
+
+if you want a super secure password, then execute the following
+
+`dd if=/dev/urandom count=555 bs=1 | base64 > super_secret_password`
 
 `NOTE:` it is `HIGHLY` recommended to use a `secret` instead of a `hardcoded value` inside of `.github/workflows/prebuilder.yml`
 
-please consult the `PERSONAL_ACCESS_TOKEN` portion of  `.github/workflows/prebuilder.yml` for details and documentation
+please consult the `SECURE_PASSWORD` portion of  `.github/workflows/prebuilder.yml` for details and documentation
+
+`NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and generate a new one with a `new password`
 
 # Installation
 

@@ -37,7 +37,7 @@ env:
   # this has the advantage of keeping repository size minimal
   # history is also kept minimal to reduce total repo size
   
-  # IMPORTANT: this requires a PERSONAL_ACCESS_TOKEN
+  # IMPORTANT: this requires a SECURE_PASSWORD
   
   PUSH_TO_EXTERNAL_REPO: true
   
@@ -58,31 +58,26 @@ env:
   
   # DO NOT hardcode the password into this file
   
-  # WRONG: PERSONAL_ACCESS_TOKEN: password123
+  # WRONG: SECURE_PASSWORD: password123
   
-  # RIGHT: PERSONAL_ACCESS_TOKEN: ${{secrets.Password}}
+  # RIGHT: SECURE_PASSWORD: ${{secrets.Password}}
     
-  # it is HIGHLY recommended to use a secret instead of a hardcoded value
-
+  # it is HIGHLY recommended to use a secret instead of a hardcoded value due to github masking ALL secrets when printed
+  # please see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
+  
   # to create a secret, go to
   
-  # User Profile -> Settings ->
-  # Developer Settings (at the bottom of page) -> Personal Access Tokens
-  
-  # then generate a new token and then click [Generate token]
-  # finally copy its token id
-  
-  # next, go to your repository containing this workflow
+  # go to your repository containing this workflow
   # Settings -> Secrets -> New repository secret
 
-  # in the [Value] field, past the token id that you copied earlier
+  # in the [Value] field, enter a strong password
   
   # in the [Name] field, enter a name, replacing spaces with underscore (_)
   # for example, we will name it REPO_ACCESS_TOKEN
   
   # and then enter it here as ${{secrets.REPO_ACCESS_TOKEN}}
   
-  PERSONAL_ACCESS_TOKEN: ${{secrets.REPO_ACCESS_TOKEN}}
+  SECURE_PASSWORD: ${{secrets.REPO_ACCESS_TOKEN}}
   
 jobs:
   build:
@@ -224,21 +219,23 @@ jobs:
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
 
-    - name: System - EXTERNAL REPO - check PERSONAL_ACCESS_TOKEN
+    - name: System - EXTERNAL REPO - check SECURE_PASSWORD
       run: |
-        echo "env.PERSONAL_ACCESS_TOKEN: ${{env.PERSONAL_ACCESS_TOKEN}}"
-        if [[ "${{env.PERSONAL_ACCESS_TOKEN}}" == "" ]]
+        echo "env.SECURE_PASSWORD: ${{env.SECURE_PASSWORD}}"
+        if [[ "${{env.SECURE_PASSWORD}}" == "" ]]
             then
-                echo the environmental variable PERSONAL_ACCESS_TOKEN has not been set in this yaml
+                echo the environmental variable SECURE_PASSWORD has not been set in this yaml
                 echo
-                echo please set PERSONAL_ACCESS_TOKEN in this yaml via
+                echo please set SECURE_PASSWORD in this yaml via
                 echo
                 echo "env:"
-                echo "  PERSONAL_ACCESS_TOKEN: \${{secrets.REPO_ACCESS_TOKEN}}"
+                echo "  SECURE_PASSWORD: \${{secrets.REPO_ACCESS_TOKEN}}"
                 echo
                 echo and ensure that your secret exists and is not empty
                 echo
-                echo if your secret exists then you should see 'env.PERSONAL_ACCESS_TOKEN: ***' or similar
+                echo if your secret exists then you should see 'env.SECURE_PASSWORD: ***' or similar
+                echo if you see 'env.SECURE_PASSWORD: aPassword45' or similar, then your password is not a repository secret
+                echo and it is highly recommended that you change your password and generate a new ssh key (see below)
                 false
             else
                 true
@@ -252,7 +249,7 @@ jobs:
                 echo "creating SSH KEY pair"
                 echo
                 echo
-                ssh-keygen -f GITHUB_ACTIONS_PREBUILD_SSH_KEY -t ed25519 -C "GITHUB_ACTIONS_PREBUILD_SSH_KEY" -P ${{env.PERSONAL_ACCESS_TOKEN}}
+                ssh-keygen -f GITHUB_ACTIONS_PREBUILD_SSH_KEY -t ed25519 -C "GITHUB_ACTIONS_PREBUILD_SSH_KEY" -P ${{env.SECURE_PASSWORD}}
                 echo
                 echo
                 git add GITHUB_ACTIONS_PREBUILD_SSH_KEY*
@@ -300,22 +297,21 @@ jobs:
         echo "                                                                                  "
         echo "IMPORTANT: the private SSH Key 'GITHUB_ACTIONS_PREBUILD_SSH_KEY' is encrypted     "
         echo "                                                                                  "
-        echo "IMPORTANT: the Personal Access Token (PAT) used to encrypt the private key is     "
-        echo "           located in the PERSONAL_ACCESS_TOKEN variable of this workflow         "
+        echo "IMPORTANT: the Secure Password used to encrypt the private key is located in the  "
+        echo "           SECURE_PASSWORD variable of this workflow                              "
         echo "                                                                                  "
         echo "                                                                                  "
-        echo "IMPORTANT: in order to decrypt this private key, the Personal Access Token (PAT)  "
-        echo "           that was used to encrypt this key is required                          "
+        echo "IMPORTANT: in order to decrypt this private key, the Secure Password that was used"
+        echo "           to encrypt this key is required                                        "
         echo "                                                                                  "
         echo "                                                                                  "
-        echo "IMPORTANT: without the Personal Access Token (PAT), decryption is impossible      "
+        echo "IMPORTANT: without the Secure Password, decryption is ALMOST impossible           "
         echo "                                                                                  "
         echo "                                                                                  "
-        echo "IMPORTANT: NEVER share your Personal Access Token (PAT) with people you dont trust"
+        echo "IMPORTANT: NEVER share your Secure Password with anyone you dont trust            "
         echo "                                                                                  "
         echo "                                                                                  "
-        echo "IMPORTANT: if you change or delete your Personal Access Token (PAT)               "
-        echo "           then a new key is REQUIRED                                             "
+        echo "IMPORTANT: if you change your Secure Password then a new key is REQUIRED          "
         echo "                                                                                  "
         echo "                                                                                  "
         echo "IMPORTANT: to generate a new key, please retrigger this workflow after the        "
@@ -365,7 +361,7 @@ jobs:
     - name: System - EXTERNAL REPO - Verify SSH Key
       run: |
         eval $(ssh-agent -s)
-        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
+        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
         ssh -vT git@github.com || true
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
@@ -392,7 +388,7 @@ jobs:
         if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}/DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
                 eval $(ssh-agent -s)
-                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
+                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
                 
                 # TODO
@@ -483,7 +479,7 @@ jobs:
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
                 eval $(ssh-agent -s)
-                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.PERSONAL_ACCESS_TOKEN}}
+                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
                 git push --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
             else
