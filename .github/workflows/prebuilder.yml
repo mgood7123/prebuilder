@@ -119,7 +119,7 @@ jobs:
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
       
-m    - name: System - EXTERNAL REPO - make sure env.SECURE_PASSWORD is not an empty string
+    - name: System - EXTERNAL REPO - make sure env.SECURE_PASSWORD is not an empty string
       run: |
         echo "env.SECURE_PASSWORD: ${{env.SECURE_PASSWORD}}"
         if [[ "${{env.SECURE_PASSWORD}}" == "" ]]
