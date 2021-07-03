@@ -41,7 +41,9 @@ if you loose your `PAT` or your `SSH Key` you can easily request a new one by de
 
 the `PAT` is used to provide secure authentication to protect against unauthorized access to your `SSH Key` since the key is required to be pushed to your repo
 
-however a `PAT` is not explicitly required, since any value can be used as the encryption key, however a `PAT` or similar is recommended instead of a basic password due to `PAT` having stronger security
+additionally a `PAT` is per user so you can simply use the same `PAT` for all your repositories instead of having to create a new `Deployment Key` for each repo using `Prebuilder`
+
+the `PAT` is `ONLY` used for encryption purposes, any value can be used instead of a `PAT`, however a `PAT` or similar is recommended instead of a basic password due to `PAT` having stronger security
 
 `NOTE:` it is `HIGHLY` recommended to use a `secret` instead of a `hardcoded value` inside of `.github/workflows/prebuilder.yml`
 
@@ -71,3 +73,22 @@ this is due to `github` placing a maximum file size of  `100 MB`
 using `git lfs` does not work since it has restricted bandwidth usage and max of `1 GB` storage
 
 you can re-combine them by calling `unsplit_files.sh` in your shell
+
+# Obtaining your files
+
+### Local
+
+if `Prebuilder` is configured to push to locally, obtain your files by execute the following command
+
+```
+git pull
+```
+
+### External
+
+if `Prebuilder` is configured to push to external repositories, obtain your files by execute the following command
+
+```
+git pull
+git submodule update --init
+```

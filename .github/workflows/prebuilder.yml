@@ -69,8 +69,7 @@ env:
   # User Profile -> Settings ->
   # Developer Settings (at the bottom of page) -> Personal Access Tokens
   
-  # then generate a new token and give it [public_repo] scope and then
-  # click [Generate token]
+  # then generate a new token and then click [Generate token]
   # finally copy its token id
   
   # next, go to your repository containing this workflow
