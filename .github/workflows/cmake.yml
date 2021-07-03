@@ -106,6 +106,12 @@ jobs:
     - name: System - Checkout repository
       uses: actions/checkout@v2
     
+    - name: Git - Configure global user email and user name
+      run: |
+        git config --global user.email "no_email@no_email.com"
+        git config --global user.name "GITHUB_ACTIONS_PREBUILD"
+        git status
+
     - name: Git - Pull
       run: |
         git pull
@@ -117,12 +123,14 @@ jobs:
             then
                 git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
                 git add GITHUB_ACTIONS_PREBUILD_CONFIG
+                git commit -m "update configuration"
                 echo "'git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' has been updated"
             else
                 if [[ $(git config -f GITHUB_ACTIONS_PREBUILD_CONFIG -l | grep -q GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO; echo $?) != "0" ]]
                     then
                         git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
                         git add GITHUB_ACTIONS_PREBUILD_CONFIG
+                        git commit -m "update configuration"
                         echo "'git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' has been updated"
                     else
                         if [[ $(git config -f GITHUB_ACTIONS_PREBUILD_CONFIG --get GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO) != ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
@@ -141,6 +149,7 @@ jobs:
                                 mv -v $(git config -f GITHUB_ACTIONS_PREBUILD_CONFIG --get GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO) ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
                                 git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
                                 git add GITHUB_ACTIONS_PREBUILD_CONFIG
+                                git commit -m "update configuration"
                                 echo "'git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO' has been updated"
                         fi
                 fi
@@ -187,13 +196,7 @@ jobs:
       run: |
         find ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} -name \*.${{matrix.extension}}
         git status
-      
-    - name: Git - Configure global user email and user name
-      run: |
-        git config --global user.email "no_email@no_email.com"
-        git config --global user.name "GITHUB_ACTIONS_PREBUILD"
-        git status
-        
+              
     - name: System - Create <Library Output>/<operating system> directory
       run: |
         if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}} ]]
