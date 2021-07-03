@@ -429,7 +429,7 @@ jobs:
         rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
         
-    - name: System - Split files into smaller files (Operating System == macOS)
+    - name: System - Split files into smaller files (Operating System == macOS-latest)
       run: |
         chmod +x ./split_files.sh
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
@@ -439,9 +439,9 @@ jobs:
                 ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "stat -f \"%OLp\""
         fi
         git status
-      if: matrix.os == 'macOS'
+      if: matrix.os == 'macOS-latest'
 
-    - name: System - Split files into smaller files (Operating System != macOS)
+    - name: System - Split files into smaller files (Operating System != macOS-latest)
       run: |
         chmod +x ./split_files.sh
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
@@ -451,7 +451,7 @@ jobs:
                 ./split_files.sh ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}} ${{matrix.extension}} "stat --format \"%a\""
         fi
         git status
-      if: matrix.os != 'macOS'
+      if: matrix.os != 'macOS-latest'
 
     - name: Git - Add files
       run: |
