@@ -45,8 +45,6 @@ if you loose your `Secure Password` or your `SSH Key` you can easily request a n
 
 the `Secure Password` is used to provide `secure authentication` to protect against `unauthorized access` to your `SSH Key` since the key is `required` to be pushed to your repo
 
-please see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
-
 if you want a super secure password, then execute the following
 
 `dd if=/dev/urandom count=555 bs=1 | base64 > super_secret_password`
@@ -54,6 +52,8 @@ if you want a super secure password, then execute the following
 `NOTE:` it is `HIGHLY` recommended to use a `secret` instead of a `hardcoded value` inside of `.github/workflows/prebuilder.yml`
 
 please consult the `SECURE_PASSWORD` portion of  `.github/workflows/prebuilder.yml` for details and documentation
+
+please also see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
 
 `NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and then generate a new one with a `new password`
 
