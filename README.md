@@ -55,7 +55,7 @@ if you want a super secure password, then execute the following
 
 please consult the `SECURE_PASSWORD` portion of  `.github/workflows/prebuilder.yml` for details and documentation
 
-`NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and generate a new one with a `new password`
+`NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and then generate a new one with a `new password`
 
 # Installation
 
