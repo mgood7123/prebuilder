@@ -50,7 +50,20 @@ env:
   
   
   
-  # Put your secret here
+  # this variable is used to encrypt and decrypt your SSH Key
+  
+  # if it changes, a new SSH Key will need to be generated
+  
+  # DO NOT use a publicly accessable password
+  
+  # DO NOT hardcode the password into this file
+  
+  # WRONG: PERSONAL_ACCESS_TOKEN: password123
+  
+  # RIGHT: PERSONAL_ACCESS_TOKEN: ${{secrets.Password}}
+    
+  # it is HIGHLY recommended to use a secret instead of a hardcoded value
+
   # to create a secret, go to
   
   # User Profile -> Settings ->

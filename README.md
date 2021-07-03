@@ -41,6 +41,12 @@ if you loose your `PAT` or your `SSH Key` you can easily request a new one by de
 
 the `PAT` is used to provide secure authentication to protect against unauthorized access to your `SSH Key` since the key is required to be pushed to your repo
 
+however a `PAT` is not explicitly required, since any value can be used as the encryption key, however a `PAT` or similar is recommended instead of a basic password due to `PAT` having stronger security
+
+`NOTE:` it is `HIGHLY` recommended to use a `secret` instead of a `hardcoded value` inside of `.github/workflows/prebuilder.yml`
+
+please consult the `PERSONAL_ACCESS_TOKEN` portion of  `.github/workflows/prebuilder.yml` for details and documentation
+
 # Installation
 
 simply copy these files into your repo
@@ -53,6 +59,8 @@ unsplit_files.sh
 # Internals and Configuration
 
 `Prebuilder` has various configuration options, consult `.github/workflows/prebuilder.yml` for details and documentation
+
+`Prebuilder` also has multiple checks and notifies you when something is incorrect, please have a look at the current workflow in the `ACTIONS` tab for details
 
 # large files
 
