@@ -37,7 +37,9 @@ the first time the `Prebuilder` builds something that will be pushed to a `dedic
 
 the step `System - EXTERNAL REPO - Create ssh key if needed` will tell you how to do so
 
-`Prebuilder` will also request for a `Secure Password` this is required to encrypt and decrypt the `SSH Key`
+`Prebuilder` will also request for a `Secure Password`
+
+this `Secure Password` required to encrypt and decrypt the `SSH Key`
 
 if you loose your `Secure Password` or your `SSH Key` you can easily request a new one by deleting the `SSH Key` that has been added to your repo, and then adding the new `SSH Key` to your account
 
