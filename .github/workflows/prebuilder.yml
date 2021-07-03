@@ -108,6 +108,40 @@ jobs:
 
     steps:
     
+    - name: System - EXTERNAL REPO - Make sure env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER is not an empty string
+      run: |
+        if [[ ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} == "" ]]
+            then
+                echo "ERROR: env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER is empty"
+                echo "       please make sure env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER"
+                echo "       is not empty"
+                false
+        fi
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+      
+m    - name: System - EXTERNAL REPO - make sure env.SECURE_PASSWORD is not an empty string
+      run: |
+        echo "env.SECURE_PASSWORD: ${{env.SECURE_PASSWORD}}"
+        if [[ "${{env.SECURE_PASSWORD}}" == "" ]]
+            then
+                echo the environmental variable SECURE_PASSWORD has not been set in this yaml
+                echo
+                echo please set SECURE_PASSWORD in this yaml via
+                echo
+                echo "env:"
+                echo "  SECURE_PASSWORD: \${{secrets.REPO_ACCESS_TOKEN}}"
+                echo
+                echo and ensure that your secret exists and is not empty
+                echo
+                echo "if your secret exists then you should see 'env.SECURE_PASSWORD: ***' or similar"
+                echo "if you see 'env.SECURE_PASSWORD: aPassword45' or similar, then your password is not a repository secret"
+                echo "and it is highly recommended that you change your password and generate a new ssh key (see below)"
+                false
+            else
+                true
+        fi
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
+      
     - name: Git - Disable automatic line ending conversion
       run: |
         git config --global core.autocrlf false
@@ -126,8 +160,12 @@ jobs:
         git pull
         git status
         
-    - name: System - Setup configuration variable needed by super-projects
+    - name: System - EXTERNAL REPO - Setup configuration variable needed by super-projects
       run: |
+        if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
+            then
+                mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        fi
         if [[ ! -e GITHUB_ACTIONS_PREBUILD_CONFIG ]]
             then
                 git config -f GITHUB_ACTIONS_PREBUILD_CONFIG GITHUB.ACTIONS.PREBUILD.EXTERNAL.REPO ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
@@ -164,8 +202,9 @@ jobs:
                 fi
         fi
         true
+      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
-    - name: System - Check if build folder exists
+    - name: System - Make sure build folder does not exist
       run: |
         if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}} ]]
             then
@@ -179,7 +218,7 @@ jobs:
     - name: Git - Clone submodules
       run: |
         git submodule init
-        git submodule deinit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
+        git config -f GITHUB_ACTIONS_PREBUILD_CONFIG -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && git submodule deinit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
         git submodule update
 
         git submodule foreach --recursive "\
@@ -220,29 +259,6 @@ jobs:
         fi
         git status
       if: env.PUSH_TO_EXTERNAL_REPO == 'false'
-
-    - name: System - EXTERNAL REPO - check SECURE_PASSWORD
-      run: |
-        echo "env.SECURE_PASSWORD: ${{env.SECURE_PASSWORD}}"
-        if [[ "${{env.SECURE_PASSWORD}}" == "" ]]
-            then
-                echo the environmental variable SECURE_PASSWORD has not been set in this yaml
-                echo
-                echo please set SECURE_PASSWORD in this yaml via
-                echo
-                echo "env:"
-                echo "  SECURE_PASSWORD: \${{secrets.REPO_ACCESS_TOKEN}}"
-                echo
-                echo and ensure that your secret exists and is not empty
-                echo
-                echo "if your secret exists then you should see 'env.SECURE_PASSWORD: ***' or similar"
-                echo "if you see 'env.SECURE_PASSWORD: aPassword45' or similar, then your password is not a repository secret"
-                echo "and it is highly recommended that you change your password and generate a new ssh key (see below)"
-                false
-            else
-                true
-        fi
-      if: env.PUSH_TO_EXTERNAL_REPO == 'true'
       
     - name: System - EXTERNAL REPO - Create ssh key if needed
       run: |
@@ -369,19 +385,14 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
-        if [[ -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} ]]
-            then
-                if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
-                    then
-                        git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                    else
-                        git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                        git checkout main
-                fi
-            else
-                mkdir ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}
-                git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+            if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
+                then
+                    git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                else
+                    git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                    cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                    git checkout main
+            fi
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
