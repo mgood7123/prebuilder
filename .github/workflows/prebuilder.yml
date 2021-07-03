@@ -385,14 +385,13 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
-            if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
-                then
-                    git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                else
-                    git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                    cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                    git checkout main
-            fi
+        if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
+            then
+                git submodule add https://github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+            else
+                git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                git checkout main
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
