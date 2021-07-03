@@ -233,9 +233,9 @@ jobs:
                 echo
                 echo and ensure that your secret exists and is not empty
                 echo
-                echo if your secret exists then you should see 'env.SECURE_PASSWORD: ***' or similar
-                echo if you see 'env.SECURE_PASSWORD: aPassword45' or similar, then your password is not a repository secret
-                echo and it is highly recommended that you change your password and generate a new ssh key (see below)
+                echo "if your secret exists then you should see 'env.SECURE_PASSWORD: ***' or similar"
+                echo "if you see 'env.SECURE_PASSWORD: aPassword45' or similar, then your password is not a repository secret"
+                echo "and it is highly recommended that you change your password and generate a new ssh key (see below)"
                 false
             else
                 true
