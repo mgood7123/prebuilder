@@ -86,7 +86,7 @@ you can re-combine them by calling `unsplit_files.sh` in your shell
 
 ### Local
 
-if `Prebuilder` is configured to push to locally, obtain your files by execute the following command
+if `Prebuilder` is configured to push to locally, obtain your files by executing the following command
 
 ```
 git pull
@@ -94,7 +94,7 @@ git pull
 
 ### External
 
-if `Prebuilder` is configured to push to external repositories, obtain your files by execute the following command
+if `Prebuilder` is configured to push to external repositories, obtain your files by executing the following command
 
 ```
 git pull
