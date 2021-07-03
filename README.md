@@ -41,9 +41,9 @@ the step `System - EXTERNAL REPO - Create ssh key if needed` will tell you how t
 
 this `Secure Password` is `required` to `encrypt` and `decrypt` the `SSH Key`
 
-if you loose your `Secure Password` or your `SSH Key` you can easily request a new one by deleting the `SSH Key` that has been added to your repo, and then adding the new `SSH Key` to your account
+if you loose your `Secure Password` or your `SSH Key` you can easily request a new one by `deleting` the `SSH Key` that has been added to your repo, and then `adding` the new `SSH Key` to `your account`
 
-the `Secure Password` is used to provide secure authentication to protect against unauthorized access to your `SSH Key` since the key is required to be pushed to your repo
+the `Secure Password` is used to provide `secure authentication` to protect against `unauthorized access` to your `SSH Key` since the key is `required` to be pushed to your repo
 
 please see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
 
