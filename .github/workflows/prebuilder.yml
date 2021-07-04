@@ -374,11 +374,15 @@ jobs:
       run: |
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
+        ssh-add -l -E sha256
         ssh -vT git@github.com || true
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: Git - EXTERNAL REPO - Clone
       run: |
+        eval $(ssh-agent -s)
+        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
+        ssh-add -l -E sha256
         if [[ ! -e ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} ]]
             then
                 git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git || true
@@ -396,6 +400,7 @@ jobs:
       run: |
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
+        ssh-add -l -E sha256
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
         if [[ ! -e GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
