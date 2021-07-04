@@ -272,14 +272,10 @@ jobs:
                 ssh-keygen -f GITHUB_ACTIONS_PREBUILD_SSH_KEY -t ed25519 -C "GITHUB_ACTIONS_PREBUILD_SSH_KEY" -P ${{env.SECURE_PASSWORD}}
                 echo
                 echo
-                git add GITHUB_ACTIONS_PREBUILD_SSH_KEY*
-                git commit -m "add ssh key pair"
-                git push
-                echo
-                echo
                 echo "SSH KEY pair has been created"
                 echo
-                echo "the SSH KEY pair has been saved in the repository for recovery purposes:"
+                echo "the SSH KEY pair will be saved in the repository for recovery purposes upon successfull verification of the SSH KEY pair"
+                echo "SSH KEY pair:"
                 echo "GITHUB_ACTIONS_PREBUILD_SSH_KEY"
                 echo "GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub"
                 echo
@@ -288,7 +284,7 @@ jobs:
                 echo
                 echo "Click 'New SSH key' or 'Add SSH key'"
                 echo
-                echo "In the "Title" field, add a descriptive label for the new key"
+                echo "In the 'Title' field, add a descriptive label for the new key"
                 echo
                 echo "Paste your the contents of the public SSH Key into the 'Key' field"
                 echo
@@ -383,7 +379,7 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
         ssh-add -l -E sha256
-        if [[ ((ssh -T git@github.com || true) 2>&1 | grep -q "success"; echo $?) == 0]]
+        if [[ $($(ssh -T git@github.com 2>&1 || true) | grep -q "success"; echo $?) == 0]]
             then
                 git add GITHUB_ACTIONS_PREBUILD_SSH_KEY
                 git add GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
