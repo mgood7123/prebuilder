@@ -569,7 +569,7 @@ jobs:
       run: |
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
-                git add -v ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                git add -Av
             else
                 git add -Av ${{env.GITHUB_ACTIONS_PREBUILD_OUT_FOLDER}}/${{matrix.os}}
         fi
