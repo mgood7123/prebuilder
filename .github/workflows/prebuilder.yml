@@ -402,8 +402,8 @@ jobs:
                 #rm -rf .git
                 #git init
                 rm DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || true
-                touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
-                git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
+                touch GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
+                git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
                 git branch -M main
                 git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
