@@ -121,7 +121,7 @@ or pushing extra files for distribution
 
 there are `NO` restrictions on what you can do
 
-an example of such is https://github.com/mgood7123/prebuilder/commit/e1dac2bbfe762cf5c9fe08b7a13f137fea6d976e
+an example of such is https://github.com/mgood7123/prebuilder/commit/ee4fb00b58520d3222c82bf319e509ec13df3c2d
 
 # Copyright
 
