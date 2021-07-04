@@ -416,7 +416,12 @@ jobs:
                 git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
                 git branch -M main
-                git remote set-url origin https://github.com/${{github.repository}}-${{matrix.os}}.git
+                echo
+                ssh-add -l -E sha256
+                echo .git/config contents START
+                cat .git/config
+                echo .git/config contents END
+                git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
                 git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
             else
                 if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
