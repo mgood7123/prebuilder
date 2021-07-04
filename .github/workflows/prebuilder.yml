@@ -416,16 +416,15 @@ jobs:
                 git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
                 git branch -M main
-                echo
-                ssh-add -l -E sha256
                 git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
-                git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                git push --set-upstream origin main --force
             else
                 if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
                     then
                         echo "resetting repo"
                         git reset --hard $(git log -n 1 --pretty=format:%H -- DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT)
-                        git push --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                        git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                        git push --force --repo
                 fi
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
