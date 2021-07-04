@@ -394,20 +394,25 @@ jobs:
 
     - name: Git - EXTERNAL REPO - Init/Reset
       run: |
-        if [[ ${{env.KEEP_HISTORY}} == 'false' || ! -e GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
+        eval $(ssh-agent -s)
+        ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
+        cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+        if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
             then
-                eval $(ssh-agent -s)
-                ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
-                cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                #rm -rf .git
-                #git init
-                rm DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT || true
-                touch GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
-                git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
-                git commit -m "first commit"
-                git branch -M main
-                git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
-                git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                echo "resetting repo"
+                git reset --hard $(git log -n 1 --pretty=format:%H -- DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT)
+                git push --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+            else
+                if [[ ! -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
+                    then
+                        echo "initializing empty repo"
+                        touch GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
+                        git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
+                        git commit -m "first commit"
+                        git branch -M main
+                        git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
+                        git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
+                fi
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
