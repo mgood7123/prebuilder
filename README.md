@@ -78,7 +78,7 @@ unsplit_files.sh
 
 * `GITHUB_ACTIONS_PREBUILD_OS` - contains the `host os` that is your project is being `built on`, eg `windows-latest`, `ubuntu-latest`, or `macOS-latest`
 * `GITHUB_ACTIONS_PREBUILD_SHARED_LIBRARY_EXTENSION` - contains the `shared library extension` for the `host os`, eg `.dll`, `.so`, or `.dylib`
-* `GITHUB_ACTIONS_PREBUILD_STATIC_LIBRARY_EXTENSION` - contains the `static library extension` for the `host os`, eg `.dll`, `.so`, or `.dylib`
+* `GITHUB_ACTIONS_PREBUILD_STATIC_LIBRARY_EXTENSION` - contains the `static library extension` for the `host os`, eg `.a` for linux (`ubuntu`) and `macOS`, and `.lib` for `windows`
 * `GITHUB_ACTIONS_PREBUILD_ADDITIONAL_STATIC_LIBRARY_EXTENSION` - contains the additional `static library extension` for the `host os` (only relevant on `windows`), `.def`, or `""` if `host os` is `not` windows
 
 # large files
