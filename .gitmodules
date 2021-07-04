@@ -1,0 +1,3 @@
+[submodule "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/ubuntu-latest"]
+	path = GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/ubuntu-latest
+	url = ssh://git@github.com/mgood7123/prebuilder-ubuntu-latest.git
