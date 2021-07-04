@@ -31,6 +31,21 @@ apple/awesome-program/GITHUB_ACTIONS_PREBUILD_OUT_FOLDER/windows-latest
 these directories will `NOT` link to other repositories and `WILL` take up space in your `awesome-program` repo
 
 
+# Installation
+
+simply copy these files into your repo
+```
+.github/workflows/prebuilder.yml
+split_files.sh
+unsplit_files.sh
+```
+
+# Internals and Configuration
+
+`Prebuilder` has various configuration options, consult `.github/workflows/prebuilder.yml` for details and documentation
+
+`Prebuilder` also has multiple checks and notifies you when something is incorrect, please have a look at the current workflow in the `ACTIONS` tab for details
+
 # SSH Key
 
 the first time the `Prebuilder` builds something that will be pushed to a `dedicated` repo, it will request for you to add a `SSH Key` to your account, this is required in order to push to external repositories
@@ -56,21 +71,6 @@ please consult the `SECURE_PASSWORD` portion of  `.github/workflows/prebuilder.y
 please also see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
 
 `NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and then generate a new one with a `new password`
-
-# Installation
-
-simply copy these files into your repo
-```
-.github/workflows/prebuilder.yml
-split_files.sh
-unsplit_files.sh
-```
-
-# Internals and Configuration
-
-`Prebuilder` has various configuration options, consult `.github/workflows/prebuilder.yml` for details and documentation
-
-`Prebuilder` also has multiple checks and notifies you when something is incorrect, please have a look at the current workflow in the `ACTIONS` tab for details
 
 # CMake defines
 
@@ -121,7 +121,7 @@ or pushing extra files for distribution
 
 there are `NO` restrictions on what you can do
 
-an example of such is https://github.com/mgood7123/prebuilder/commit/ee4fb00b58520d3222c82bf319e509ec13df3c2d
+an example of such is https://github.com/mgood7123/prebuilder/commit/ee4fb00b58520d3222c82bf319e509ec13df3c2d (this example IS NOT kept up to date with the current file)
 
 # Copyright
 

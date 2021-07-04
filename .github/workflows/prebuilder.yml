@@ -435,7 +435,7 @@ jobs:
                 if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
                     then
                         echo "resetting repo"
-                        git reset --hard $(git log -n 1 --pretty=format:%H -- DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT)
+                        git reset --hard $(git log -n 1 --pretty=format:%H -- GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT)
                         git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
                         git push --force
                 fi
