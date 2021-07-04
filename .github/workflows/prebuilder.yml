@@ -398,23 +398,17 @@ jobs:
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
         cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
 
-        if [[ ! -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
+        if [[ ${{env.KEEP_HISTORY}} == 'false' || ! -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
                 rm -rf .git
                 git init
                 touch DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
-            else
-                if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
-                    then
-                        rm -rf .git
-                        git init
-                fi
+                git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
+                git commit -m "first commit"
+                git branch -M main
+                git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
+                git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
         fi
-        git add DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
-        git commit -m "first commit"
-        git branch -M main
-        git remote add origin https://github.com/${{github.repository}}-${{matrix.os}}.git
-        git push --set-upstream origin main --force --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
     - name: CMake - Configure
