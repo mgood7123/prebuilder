@@ -58,6 +58,13 @@ this `Secure Password` is `required` to `encrypt` and `decrypt` the `SSH Key`
 
 if you loose your `Secure Password` or your `SSH Key` you can easily request a new one by `deleting` the `SSH Key` that has been added to your repo, and then `adding` the new `SSH Key` to `your account`
 
+the `SSH Key` is comprised of two files:
+
+* `GITHUB_ACTIONS_PREBUILD_SSH_KEY` - the private ssh key, this is `encrypted`
+* `GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub` - the public ssh key, the contents of this file is what you add to your account
+
+only `GITHUB_ACTIONS_PREBUILD_SSH_KEY` needs to be deleted when generating a new key, as `GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub` will be automatically re-created
+
 the `Secure Password` is used to provide `secure authentication` to protect against `unauthorized access` to your `SSH Key` since the key is `required` to be pushed to your repo
 
 if you want a super secure password, then execute the following
@@ -71,6 +78,16 @@ please consult the `SECURE_PASSWORD` portion of  `.github/workflows/prebuilder.y
 please also see https://docs.github.com/en/actions/reference/encrypted-secrets for more information
 
 `NOTE:` if your `SSH Key` password has been compromised, `immediately` delete the key from your `github account` and then generate a new one with a `new password`
+
+# SSH Key reuse
+
+if your would like to use an existing `SSH Key` from an exisitng repo, then
+
+1. clone the repo containing the `SSH Key` you would like to use, repo `A`
+2. clone the repo that you would like to use the `SSH Key` with, repo `B`
+3. copy the `SSH Key` ( from repo `A` to repo `B`
+4. update the `Secure Password` for repo `B` to be the same one you use in repo `A`
+5. push the new `SSH Key`
 
 # CMake defines
 
