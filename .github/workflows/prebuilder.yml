@@ -468,7 +468,7 @@ jobs:
         rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_BUILD_FOLDER}}
         git status
         
-    - name: System - Split files into smaller files
+    - name: System - Split large files into smaller files if needed
       run: |
         chmod +x ./split_files.sh
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
