@@ -437,7 +437,7 @@ jobs:
                         echo "resetting repo"
                         git reset --hard $(git log -n 1 --pretty=format:%H -- DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT)
                         git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
-                        git push --force --repo
+                        git push --force
                 fi
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
@@ -568,10 +568,8 @@ jobs:
                 eval $(ssh-agent -s)
                 ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                git push --repo ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
-            else
-                git push
         fi
+        git push
         git status
 
     - name: Git - Add submodule
