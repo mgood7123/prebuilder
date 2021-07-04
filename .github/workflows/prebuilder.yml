@@ -409,6 +409,7 @@ jobs:
         if [[ ! -e GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
             then
                 echo "initializing empty repo"
+                
                 if [[ -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
                     then
                         rm DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
@@ -416,12 +417,20 @@ jobs:
                         git init
                         git remote add origin url
                 fi
+                
                 touch GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git add GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT
                 git commit -m "first commit"
+                
                 git branch -M main
                 git remote set-url origin ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git
                 git push --set-upstream origin main --force
+                
+                cd ../../
+                git rm -rf ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                rm -rf .git/modules/${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
+                
+                git submodule add ssh://git@github.com/${{github.repository}}-${{matrix.os}}.git ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} || true
             else
                 if [[ ${{env.KEEP_HISTORY}} == 'false' ]]
                     then
@@ -570,6 +579,7 @@ jobs:
         if [[ ${{env.PUSH_TO_EXTERNAL_REPO}} == 'true' ]]
             then
                 ls -la
+                git status
                 git add -v .gitmodules
                 git add -v ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
             else
