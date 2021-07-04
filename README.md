@@ -100,3 +100,24 @@ if `Prebuilder` is configured to push to external repositories, obtain your file
 git pull
 git submodule update --init
 ```
+
+
+# Modification
+
+you are free to modify `Prebuilder` in any way you see fit in order to make it work for your build
+
+this may include additing additional steps to download and install software that is required for your build to configure itself correctly
+
+or pushing extra files for distribution
+
+there are `NO` restrictions on what you can do
+
+an example of such is https://github.com/mgood7123/DiligentEngine/blob/master/.github/workflows/prebuilder.yml
+
+# Copyright
+
+you `MUST` give me credit as the original owner
+
+you `MUST NOT` claim the `Prebuilder` as your own work
+
+if you `modify` the `Prebuilder` in `any` way then you are `ALLOWED` to claim the `Prebuilder` as a `modified version of the original Prebuilder`
