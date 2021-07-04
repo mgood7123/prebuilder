@@ -240,17 +240,21 @@ jobs:
       
     - name: Git - Clone submodules
       run: |
+        echo executing submodule init
         git submodule init
-        git config -f GITHUB_ACTIONS_PREBUILD_CONFIG -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && (git submodule deinit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} || true)
+        git config -f GITHUB_ACTIONS_PREBUILD_CONFIG -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && (echo executing submodule denit; git submodule deinit ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}} || true)
+        echo executing submodule update
         git submodule update || true
 
         git submodule foreach --recursive "\
+                echo executing submodule init; \
                 git submodule init; \
                 if [[ -e GITHUB_ACTIONS_PREBUILD_CONFIG ]]; \
                     then \
                         git config -f GITHUB_ACTIONS_PREBUILD_CONFIG -l | grep -q GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO && \
-                        (git submodule deinit \$(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) || true); \
+                        (echo executing submodule denit; git submodule deinit \$(git config --get GITHUB_ACTIONS_PREBUILD.EXTERNAL_REPO) || true); \
                 fi; \
+                echo executing submodule update; \
                 git submodule update || true; \
         "
 
