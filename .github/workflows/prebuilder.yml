@@ -379,7 +379,7 @@ jobs:
         eval $(ssh-agent -s)
         ssh-add GITHUB_ACTIONS_PREBUILD_SSH_KEY <<< ${{env.SECURE_PASSWORD}}
         ssh-add -l -E sha256
-        if [[ $( (ssh -T git@github.com 2>&1 || true) | grep -q "success"; echo $?) == 0]]
+        if [[ $(ssh -T git@github.com 2>&1 | grep -q "success"; echo $?) == 0 ]]
             then
                 git add GITHUB_ACTIONS_PREBUILD_SSH_KEY
                 git add GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
