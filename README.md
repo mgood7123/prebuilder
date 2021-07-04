@@ -115,7 +115,7 @@ git submodule update --init
 
 you are free to modify `Prebuilder` in any way you see fit in order to make it work for your build
 
-this may include additing additional steps to download and install software that is required for your build to configure itself correctly
+this may include adding additional steps to download and install software that is required for your build to configure itself correctly
 
 or pushing extra files for distribution
 
