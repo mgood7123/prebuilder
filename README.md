@@ -112,7 +112,7 @@ or pushing extra files for distribution
 
 there are `NO` restrictions on what you can do
 
-an example of such is https://github.com/mgood7123/DiligentEngine/blob/master/.github/workflows/prebuilder.yml
+an example of such is https://github.com/mgood7123/prebuilder/commit/e1dac2bbfe762cf5c9fe08b7a13f137fea6d976e
 
 # Copyright
 
