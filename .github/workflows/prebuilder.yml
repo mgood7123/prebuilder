@@ -408,10 +408,7 @@ jobs:
             else
                 git submodule update --init ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}} || true
                 cd ${{env.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER}}/${{matrix.os}}
-                if [[ -e DO_NOT_DELETE_ME.GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_RESET_POINT ]]
-                    then
-                        git checkout main
-                fi
+                git checkout main || true
         fi
       if: env.PUSH_TO_EXTERNAL_REPO == 'true'
 
