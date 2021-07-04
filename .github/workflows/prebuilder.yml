@@ -262,6 +262,7 @@ jobs:
       run: |
         if [[ ! -e GITHUB_ACTIONS_PREBUILD_SSH_KEY ]]
             then
+                touch GITHUB_ACTIONS_PREBUILD_SSH_KEY_NEEDS_PUSH
                 if [[ -e GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub ]]
                     then
                         rm GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
@@ -382,10 +383,14 @@ jobs:
         if [[ $( (ssh -T git@github.com 2>&1 || true) | grep -q "successfully authenticated"; echo $?) == 0 ]]
             then
                 echo "SSH Key authentication success"
-                git add GITHUB_ACTIONS_PREBUILD_SSH_KEY
-                git add GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
-                git commit -m "upload SSH Key"
-                git push
+                if [[ -e GITHUB_ACTIONS_PREBUILD_SSH_KEY_NEEDS_PUSH ]]
+                    then
+                        rm GITHUB_ACTIONS_PREBUILD_SSH_KEY_NEEDS_PUSH
+                        git add GITHUB_ACTIONS_PREBUILD_SSH_KEY
+                        git add GITHUB_ACTIONS_PREBUILD_SSH_KEY.pub
+                        git commit -m "upload SSH Key" || true
+                        git push
+                fi
             else
                 echo "SSH Key authentication failure:"
                 ssh -vT git@github.com
