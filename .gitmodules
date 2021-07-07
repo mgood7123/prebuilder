@@ -6,4 +6,4 @@
 	url = http://github.com/mgood7123/prebuilder-macOS-latest.git
 [submodule "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/windows-latest"]
 	path = GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/windows-latest
-	url = ssh://git@github.com/mgood7123/prebuilder-windows-latest.git
+	url = http://github.com/mgood7123/prebuilder-windows-latest.git
