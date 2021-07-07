@@ -1,6 +1,6 @@
 [submodule "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/ubuntu-latest"]
 	path = GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/ubuntu-latest
-	url = ssh://git@github.com/mgood7123/prebuilder-ubuntu-latest.git
+	url = http://github.com/mgood7123/prebuilder-ubuntu-latest.git
 [submodule "GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/macOS-latest"]
 	path = GITHUB_ACTIONS_PREBUILD_EXTERNAL_REPO_FOLDER/macOS-latest
 	url = ssh://git@github.com/mgood7123/prebuilder-macOS-latest.git
